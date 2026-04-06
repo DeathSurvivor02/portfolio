@@ -1,0 +1,160 @@
+.hero-section {
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+}
+
+.hero-grid-container {
+  width: 100%;
+  max-width: 1400px;
+  height: 90vh;
+  position: relative;
+}
+
+/* Typography styles for labels */
+.hero-top-left, .hero-top-right, .hero-portrait-caption, .hero-bottom-right, .hero-scroll-indicator span {
+  font-family: var(--font-main);
+  font-size: 0.75rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  position: absolute;
+}
+
+/* Positioning */
+.hero-top-left {
+  top: 0;
+  left: 0;
+}
+
+.hero-top-right {
+  top: 0;
+  right: 0;
+}
+
+.hero-bottom-right {
+  bottom: 0;
+  right: 0;
+}
+
+/* Massive Text */
+.hero-massive-left, .hero-massive-right {
+  font-family: var(--font-heading);
+  font-size: clamp(6rem, 15vw, 14rem);
+  font-weight: 700;
+  line-height: 1;
+  position: absolute;
+  letter-spacing: -2px;
+  /* Allow massive text to sit behind center stuff if it overlaps */
+  z-index: 0;
+}
+
+.hero-massive-left {
+  top: 15%;
+  left: 0;
+}
+
+.hero-massive-right {
+  bottom: 15%;
+  right: 0;
+}
+
+/* Center Image Content */
+.hero-center-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  width: 100%;
+  max-width: 350px;
+}
+
+.hero-portrait-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.hero-portrait-placeholder {
+  width: 100%;
+  aspect-ratio: 3/4;
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--surface-border);
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+}
+
+.portrait-initials {
+  font-size: 4rem;
+  font-weight: 700;
+  font-family: var(--font-heading);
+  z-index: 1;
+}
+
+.hero-portrait-caption {
+  position: relative;
+  margin-top: 1rem;
+}
+
+/* Scroll indicator */
+.hero-scroll-indicator {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.hero-scroll-indicator span {
+  position: relative;
+}
+
+.scroll-line {
+  width: 1px;
+  height: 40px;
+  background: var(--surface-border);
+  position: relative;
+  overflow: hidden;
+}
+
+.scroll-line::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 50%;
+  background: var(--primary-color);
+  animation: scrollDrop 2s ease-in-out infinite;
+}
+
+@keyframes scrollDrop {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(200%); }
+}
+
+@media (max-width: 900px) {
+  .hero-massive-left, .hero-massive-right {
+    font-size: clamp(5rem, 18vw, 8rem);
+  }
+  .hero-massive-left { top: 10%; }
+  .hero-massive-right { bottom: 10%; }
+  
+  .hero-portrait-container {
+    max-width: 280px;
+  }
+}
