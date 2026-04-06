@@ -36,7 +36,7 @@ const Experience = () => {
                 <div className="timeline-dot"></div>
                 <div className="timeline-date">Sept 2019 - Aug 2021</div>
                 <h3 className="timeline-title">Diploma of Applied Sciences</h3>
-                <h4 className="timeline-subtitle">Combermere School, Barbados</h4>
+                <h4 className="timeline-subtitle">The Combermere School, Barbados</h4>
               </div>
             </div>
 
