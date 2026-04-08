@@ -1,4 +1,4 @@
-  .projects-grid {
+.projects-grid {
   display: flex;
   overflow-x: auto;
   gap: 2rem;
@@ -8,7 +8,6 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: 2.5rem;
-}
 }
 
 .project-card {
