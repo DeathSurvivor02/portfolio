@@ -1,97 +1,90 @@
-import React from 'react';
-import { FaGraduationCap, FaBriefcase, FaCertificate } from 'react-icons/fa';
-import './Experience.css';
+import React from "react";
 
-const Experience = () => {
+export const Experience = () => {
   return (
-    <section className="section" id="experience">
-      <div className="container">
-        
-        <div className="experience-grid">
-          
-          <div className="experience-column">
-            <h2 className="section-title"><FaGraduationCap className="title-icon"/> Education</h2>
-            <div className="timeline">
-              <div className="timeline-item glass-card">
-                <div className="timeline-dot"></div>
-                <div className="timeline-date">Sept 2024 - Present</div>
-                <h3 className="timeline-title">Software Engineering Technology (Co-op) Advanced Diploma</h3>
-                <h4 className="timeline-subtitle">Centennial College, Toronto, ON</h4>
-                <p className="timeline-description">
-                  Key courses: Web Applications Design | Software Requirements | Advanced Databases (SQL) | Java Programming
-                </p>
-              </div>
-
-              <div className="timeline-item glass-card">
-                <div className="timeline-dot"></div>
-                <div className="timeline-date">Sept 2021 - Dec 2023</div>
-                <h3 className="timeline-title">Computer Science and Mathematics Bachelors</h3>
-                <h4 className="timeline-subtitle">University of the West Indies, Cavehill, Barbados</h4>
-                <p className="timeline-description">
-                  Key courses: Object-Oriented Programming Concepts (Java), Programming 1&2 (C++), Data Structures, Calculus 1&2, Micro-economics
-                </p>
-              </div>
-
-              <div className="timeline-item glass-card">
-                <div className="timeline-dot"></div>
-                <div className="timeline-date">Sept 2019 - Aug 2021</div>
-                <h3 className="timeline-title">Diploma of Applied Sciences</h3>
-                <h4 className="timeline-subtitle">The Combermere School, Barbados</h4>
-              </div>
-            </div>
-
-            <h2 className="section-title mt-top"><FaBriefcase className="title-icon"/> Experience</h2>
-            <div className="timeline">
-              <div className="timeline-item glass-card">
-                <div className="timeline-dot"></div>
-                <div className="timeline-date">2022 - 2024</div>
-                <h3 className="timeline-title">Cashier</h3>
-                <h4 className="timeline-subtitle">Popular Discounts - Christ Church, Barbados</h4>
-                <ul className="timeline-list">
-                  <li>Strengthened problem-solving and critical thinking by resolving customer issues.</li>
-                  <li>Built strong communication skills through daily interactions with diverse customers.</li>
-                  <li>Developed adaptability and multitasking in a fast-paced environment.</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-
-          <div className="experience-column">
-            <h2 className="section-title"><FaCertificate className="title-icon"/> Development</h2>
-            <div className="cert-list">
-              <div className="glass-card cert-card">
-                <div className="cert-status in-progress">In Progress</div>
-                <h3>Python for Everyone - Course 2&3</h3>
-                <p>Coursera (Online)</p>
-              </div>
-              
-              <div className="glass-card cert-card">
-                <div className="cert-status in-progress">In Progress</div>
-                <h3>Google Automation with Python - Course 1</h3>
-                <p>Coursera (Online)</p>
-              </div>
-              
-              <div className="glass-card cert-card">
-                <div className="cert-status in-progress">In Progress</div>
-                <h3>IBM Cybersecurity Analyst - Course 3</h3>
-                <p>Coursera (Online)</p>
-              </div>
-
-              <div className="glass-card cert-card">
-                <div className="cert-status completed">Completed</div>
-                <h3>Encryption and Decryption using C++</h3>
-                <p>Coursera (Online)</p>
-              </div>
-
-              <div className="glass-card cert-card">
-                <div className="cert-status completed">Completed</div>
-                <h3>Programming for Everybody (Started with Python)</h3>
-                <p>Coursera (Online)</p>
-              </div>
-            </div>
-          </div>
-
+    <section id="experience" className="space-y-8">
+      <div className="hairline-b pb-4">
+        <div className="text-[11px] font-mono uppercase tracking-widest text-slate-500">
+          Academic & Career Path
         </div>
+        <h2 className="text-2xl sm:text-3xl font-bold text-white mt-1 font-heading">
+          Credentials & Experience
+        </h2>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        
+        {/* Left: Education */}
+        <div className="space-y-6">
+          <div className="text-xs uppercase font-mono text-slate-400 tracking-wider">
+            Education
+          </div>
+
+          <div className="glass-surface rounded-xl p-6 space-y-2">
+            <div className="flex items-center justify-between text-xs font-mono text-slate-400">
+              <span className="text-white">Centennial College • Toronto</span>
+              <span className="text-emerald-400">2024 — Present</span>
+            </div>
+            <h3 className="text-base font-bold text-white font-heading">
+              Software Engineering Technology (Co-op)
+            </h3>
+            <p className="text-xs text-slate-300 leading-relaxed font-normal">
+              Advanced diploma specializing in full-cycle software architecture, advanced databases, Java programming, web systems, and software QA methodology.
+            </p>
+          </div>
+
+          <div className="glass-surface rounded-xl p-6 space-y-2">
+            <div className="flex items-center justify-between text-xs font-mono text-slate-400">
+              <span className="text-white">UWI Cave Hill • Barbados</span>
+              <span>2021 — 2023</span>
+            </div>
+            <h3 className="text-base font-bold text-white font-heading">
+              B.Sc. in Computer Science & Mathematics
+            </h3>
+            <p className="text-xs text-slate-300 leading-relaxed font-normal">
+              Coursework in Data Structures & Algorithms, Object-Oriented Programming (Java), Systems Programming (C++), Calculus I & II, and Discrete Math.
+            </p>
+          </div>
+        </div>
+
+        {/* Right: Applied Experience & Certs */}
+        <div className="space-y-6">
+          <div className="text-xs uppercase font-mono text-slate-400 tracking-wider">
+            Industry & Professional Development
+          </div>
+
+          <div className="glass-surface rounded-xl p-6 space-y-2">
+            <div className="flex items-center justify-between text-xs font-mono text-slate-400">
+              <span className="text-white">Popular Discounts</span>
+              <span>2022 — 2024</span>
+            </div>
+            <h3 className="text-base font-bold text-white font-heading">
+              Customer Operations & Retail POS Specialist
+            </h3>
+            <p className="text-xs text-slate-300 leading-relaxed font-normal">
+              Maintained fast-paced electronic Point of Sale checkout stations, handled inventory reconciliation, resolved checkout hardware faults, and communicated effectively under time constraints.
+            </p>
+          </div>
+
+          <div className="glass-surface rounded-xl p-6 space-y-3 font-mono text-xs">
+            <div className="text-slate-400 uppercase tracking-wider text-[11px]">
+              Certifications
+            </div>
+            <div className="flex items-center justify-between py-1 hairline-b text-slate-200">
+              <span>C++ Encryption & Decryption</span>
+              <span className="text-emerald-400">Completed</span>
+            </div>
+            <div className="flex items-center justify-between py-1 hairline-b text-slate-200">
+              <span>Programming for Everybody (Python)</span>
+              <span className="text-emerald-400">Completed</span>
+            </div>
+            <div className="flex items-center justify-between py-1 text-slate-200">
+              <span>IBM Cybersecurity Analyst Spec.</span>
+              <span className="text-amber-400">In Progress</span>
+            </div>
+          </div>
+        </div>
+
       </div>
     </section>
   );

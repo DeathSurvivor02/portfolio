@@ -1,0 +1,82 @@
+import React, { useEffect, useRef, useState } from "react";
+import { useScroll, useTransform, motion } from "framer-motion";
+
+export const Timeline = ({ data }) => {
+  const ref = useRef(null);
+  const containerRef = useRef(null);
+  const [height, setHeight] = useState(0);
+
+  useEffect(() => {
+    if (ref.current) {
+      const rect = ref.current.getBoundingClientRect();
+      setHeight(rect.height);
+    }
+  }, [ref, data]);
+
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start 10%", "end 50%"],
+  });
+
+  const heightTransform = useTransform(scrollYProgress, [0, 1], [0, height]);
+  const opacityTransform = useTransform(scrollYProgress, [0, 0.1], [0, 1]);
+
+  return (
+    <div className="w-full font-sans" ref={containerRef}>
+      <div ref={ref} className="relative max-w-6xl mx-auto pb-12">
+        {data.map((item, index) => (
+          <div
+            key={index}
+            className="flex justify-start pt-12 md:pt-28 md:gap-10"
+          >
+            {/* Sticky Milestone Marker on the Left */}
+            <div className="sticky flex flex-col md:flex-row z-30 items-center top-32 self-start max-w-xs lg:max-w-sm md:w-full">
+              <div className="h-9 absolute left-3 md:left-3 w-9 rounded-full bg-[#07080a] border border-white/20 flex items-center justify-center shadow-lg shadow-black/80">
+                <div className="h-3 w-3 rounded-full bg-cyan-400 border border-cyan-300" />
+              </div>
+              <div className="hidden md:block pl-16">
+                <h3 className="text-xl lg:text-2xl font-bold text-white tracking-tight font-heading">
+                  {item.title}
+                </h3>
+                {item.subtitle && (
+                  <p className="text-xs font-mono text-cyan-400 mt-1 uppercase tracking-wider">
+                    {item.subtitle}
+                  </p>
+                )}
+              </div>
+            </div>
+
+            {/* Content Pane on the Right */}
+            <div className="relative pl-16 pr-4 md:pl-4 w-full">
+              <div className="md:hidden block mb-6">
+                <h3 className="text-xl font-bold text-white font-heading">
+                  {item.title}
+                </h3>
+                {item.subtitle && (
+                  <p className="text-xs font-mono text-cyan-400 mt-0.5 uppercase tracking-wider">
+                    {item.subtitle}
+                  </p>
+                )}
+              </div>
+              {item.content}
+            </div>
+          </div>
+        ))}
+
+        {/* Scroll-Driven Gradient Beam Track */}
+        <div
+          style={{ height: height + "px" }}
+          className="absolute md:left-[30px] left-[30px] top-0 overflow-hidden w-[2px] bg-gradient-to-b from-transparent via-white/10 to-transparent"
+        >
+          <motion.div
+            style={{
+              height: heightTransform,
+              opacity: opacityTransform,
+            }}
+            className="absolute inset-x-0 top-0 w-[2px] bg-gradient-to-b from-cyan-400 via-indigo-500 to-purple-500 rounded-full shadow-[0_0_12px_rgba(56,189,248,0.7)]"
+          />
+        </div>
+      </div>
+    </div>
+  );
+};
