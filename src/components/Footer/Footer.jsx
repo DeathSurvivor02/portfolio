@@ -1,26 +1,30 @@
 import React from "react";
+import { profile } from "../../data/site";
 
 export const Footer = () => {
   return (
-    <footer className="hairline-t py-8 text-center text-xs font-mono text-slate-500 mt-28">
-      <div className="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-        <div>Ean Bynoe © {new Date().getFullYear()}. Architected with precision.</div>
-        <div className="flex items-center gap-6">
-          <a href="#hero" className="hover:text-slate-300 transition">
-            Top ↑
-          </a>
-          <a
-            href="https://github.com/DeathSurvivor02"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:text-slate-300 transition"
-          >
-            GitHub
-          </a>
-          <a href="mailto:bynoeean@gmail.com" className="hover:text-slate-300 transition">
-            Email
-          </a>
-        </div>
+    <footer className="border-t border-line">
+      <div className="max-w-6xl mx-auto px-5 sm:px-8 py-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-subtle">
+        <p>
+          © {new Date().getFullYear()} {profile.name}
+        </p>
+        <ul className="flex items-center gap-6">
+          <li>
+            <a href={profile.github} target="_blank" rel="noopener noreferrer" className="hover:text-fg transition-colors">
+              GitHub
+            </a>
+          </li>
+          <li>
+            <a href={`mailto:${profile.email}`} className="hover:text-fg transition-colors">
+              Email
+            </a>
+          </li>
+          <li>
+            <a href="#top" className="hover:text-fg transition-colors">
+              Back to top <span aria-hidden="true">↑</span>
+            </a>
+          </li>
+        </ul>
       </div>
     </footer>
   );

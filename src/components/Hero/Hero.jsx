@@ -1,95 +1,54 @@
-import React, { useState } from "react";
-import { FaCheck } from "react-icons/fa";
+import React from "react";
+import { profile } from "../../data/site";
+import { ArrowDown, ArrowUpRight, GitHub } from "../ui/Icons";
+import { CopyEmailButton } from "../ui/CopyEmailButton";
 
 export const Hero = () => {
-  const [copied, setCopied] = useState(false);
-
-  const handleCopyEmail = () => {
-    navigator.clipboard.writeText("bynoeean@gmail.com").then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2200);
-    });
-  };
-
   return (
-    <section id="hero" className="pt-8 pb-6">
-      <div className="space-y-8 max-w-4xl">
-        
-        {/* Clean Inline Origin & Academic Metadata */}
-        <div className="flex flex-wrap items-center gap-3 text-xs font-mono text-slate-400 uppercase tracking-widest">
-          <span className="text-blue-400 font-semibold">TORONTO, ON</span>
-          <span className="text-slate-600">/</span>
-          <span className="text-slate-300">CENTENNIAL COLLEGE (CO-OP)</span>
-          <span className="text-slate-600">/</span>
-          <span>EX-UWI CAVE HILL</span>
-        </div>
+    <section aria-labelledby="hero-title" className="pt-12 sm:pt-20 pb-4">
+      <div className="grid lg:grid-cols-[minmax(0,1fr)_21rem] gap-12 lg:gap-16 items-end">
+        <div className="space-y-7">
+          <p className="inline-flex items-center gap-2.5 rounded-full border border-line bg-surface pl-3 pr-4 py-1.5 text-sm text-muted">
+            <span aria-hidden="true" className="pulse-dot w-2 h-2 rounded-full bg-ok" />
+            {profile.availability}
+          </p>
 
-        {/* High-Contrast Authoritative Headline (Zero generic gradients) */}
-        <h1 className="text-4xl sm:text-6xl md:text-[64px] font-extrabold tracking-tight text-white leading-[1.08] font-heading">
-          Software Engineer building{" "}
-          <span className="text-slate-400">backend infrastructure</span>,
-          retail data systems, and low-latency tooling.
-        </h1>
-
-        <p className="text-slate-300 text-base sm:text-lg max-w-2xl leading-relaxed font-normal">
-          Engineering full-stack inventory platforms, REST APIs, automated developer telemetry daemons, and algorithmic transit routing engines. Grounded in Computer Science &amp; Mathematics with production C#, TypeScript, Python, and C/C++.
-        </p>
-
-        {/* Sharp Solid Action Row */}
-        <div className="flex flex-wrap items-center gap-3 pt-2">
-          <a
-            href="#skills"
-            className="px-5 py-2.5 rounded-sm bg-white text-black font-semibold text-xs tracking-wide hover:bg-slate-200 transition flex items-center gap-2"
+          <h1
+            id="hero-title"
+            className="text-[2.5rem] leading-[1.05] sm:text-6xl lg:text-[4.25rem] font-extrabold text-fg"
           >
-            <span>Inspect Skills &amp; Systems</span>
-            <span className="font-mono text-slate-600">↓</span>
-          </a>
+            Software engineer building <span className="text-accent">backend infrastructure</span>, retail data
+            systems, and low-latency tooling.
+          </h1>
 
-          <button
-            onClick={handleCopyEmail}
-            className="px-4 py-2.5 rounded-sm bg-[#0c0e13] hover:bg-[#131720] border border-[#222631] hover:border-blue-500/60 text-xs font-mono text-slate-300 transition flex items-center gap-2 cursor-pointer"
-          >
-            {copied ? (
-              <>
-                <FaCheck className="w-3.5 h-3.5 text-emerald-400" />
-                <span className="text-emerald-400 font-semibold">Copied: bynoeean@gmail.com</span>
-              </>
-            ) : (
-              <span>bynoeean@gmail.com</span>
-            )}
-          </button>
+          <p className="text-muted text-lg leading-relaxed max-w-2xl">{profile.summary}</p>
 
-          <a
-            href="https://github.com/DeathSurvivor02"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="px-4 py-2.5 rounded-sm bg-[#0c0e13] hover:bg-[#131720] border border-[#222631] hover:border-red-500/60 text-xs font-mono text-slate-300 hover:text-white transition flex items-center gap-1.5"
-          >
-            <span>github.com/DeathSurvivor02</span>
-            <span className="text-[10px] text-slate-500">↗</span>
-          </a>
-        </div>
-
-        {/* Crisp Technical Specification Strip */}
-        <div className="pt-8 hairline-t grid grid-cols-2 sm:grid-cols-4 gap-6 font-mono">
-          <div>
-            <div className="text-[11px] text-slate-500 uppercase tracking-wider">Core Stack</div>
-            <div className="text-sm font-semibold text-white mt-1">C# • TS • Python • Dart</div>
-          </div>
-          <div>
-            <div className="text-[11px] text-slate-500 uppercase tracking-wider">Academic Focus</div>
-            <div className="text-sm font-semibold text-white mt-1">Software Eng. &amp; Math</div>
-          </div>
-          <div>
-            <div className="text-[11px] text-slate-500 uppercase tracking-wider">GitHub Index</div>
-            <div className="text-sm font-semibold text-blue-400 mt-1">18 Public Repositories</div>
-          </div>
-          <div>
-            <div className="text-[11px] text-slate-500 uppercase tracking-wider">Availability</div>
-            <div className="text-sm font-semibold text-white mt-1">Winter / Summer 2027</div>
+          <div className="flex flex-wrap items-center gap-3 pt-1">
+            <a href="#projects" className="btn btn-primary">
+              View projects
+              <ArrowDown />
+            </a>
+            <CopyEmailButton email={profile.email} />
+            <a href={profile.github} target="_blank" rel="noopener noreferrer" className="btn btn-secondary">
+              <GitHub />
+              GitHub
+              <ArrowUpRight className="w-3.5 h-3.5 text-subtle" />
+              <span className="sr-only">(opens in a new tab)</span>
+            </a>
           </div>
         </div>
 
+        <aside aria-label="At a glance" className="card p-6">
+          <p className="eyebrow mb-1">At a glance</p>
+          <dl>
+            {profile.facts.map((fact, i) => (
+              <div key={fact.label} className={`py-3 ${i > 0 ? "border-t border-line" : ""}`}>
+                <dt className="text-xs font-mono text-subtle">{fact.label}</dt>
+                <dd className="text-[0.9375rem] font-medium text-fg mt-0.5 leading-snug">{fact.value}</dd>
+              </div>
+            ))}
+          </dl>
+        </aside>
       </div>
     </section>
   );

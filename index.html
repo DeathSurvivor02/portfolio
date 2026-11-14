@@ -1,17 +1,30 @@
 <!doctype html>
-<html lang="en" class="dark scroll-smooth">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#07080a" />
-    <meta name="description" content="Ean Bynoe — Systems & Software Engineer. Building concurrent tools, developer telemetry, and resilient backend systems." />
-    <title>Ean Bynoe | Systems & Software Engineer</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <meta name="color-scheme" content="dark light" />
+    <meta name="theme-color" content="#0c0d0f" />
+    <meta name="description" content="Ean Bynoe — software engineer in Toronto building backend infrastructure, retail data systems, and low-latency tooling. Open to co-op roles for 2027." />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Ean Bynoe — Software Engineer" />
+    <meta property="og:description" content="Backend infrastructure, retail data systems, and low-latency tooling. Open to co-op roles for 2027." />
+    <meta name="twitter:card" content="summary" />
+    <title>Ean Bynoe — Software Engineer</title>
+    <script>
+      // Apply the saved (or system) theme before first paint to avoid a flash.
+      (function () {
+        var theme;
+        try { theme = localStorage.getItem("theme"); } catch (e) { /* storage unavailable */ }
+        if (theme !== "light" && theme !== "dark") {
+          theme = window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+        }
+        document.documentElement.dataset.theme = theme;
+      })();
+    </script>
   </head>
-  <body class="bg-[#07080a] text-slate-100 antialiased selection:bg-blue-600/30 selection:text-white">
+  <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>

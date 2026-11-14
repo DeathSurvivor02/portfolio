@@ -1,80 +1,153 @@
-import React, { useState } from "react";
-import { HiMenu, HiX } from "react-icons/hi";
+import React, { useEffect, useState } from "react";
+import { navLinks, profile } from "../../data/site";
+import { Close, Menu, Moon, Sun } from "../ui/Icons";
 
-export const Navbar = () => {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+/** Tracks which section currently sits under the header. */
+const useActiveSection = (ids) => {
+  const [active, setActive] = useState("");
+
+  useEffect(() => {
+    const sections = ids.map((id) => document.getElementById(id)).filter(Boolean);
+    if (!sections.length || typeof IntersectionObserver === "undefined") return;
+
+    const visible = new Set();
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => (e.isIntersecting ? visible.add(e.target.id) : visible.delete(e.target.id)));
+        // Prefer the last section (in page order) that crosses the reading line
+        const current = ids.filter((id) => visible.has(id)).pop();
+        setActive(current || "");
+      },
+      { rootMargin: "-30% 0px -60% 0px" }
+    );
+    sections.forEach((s) => observer.observe(s));
+    return () => observer.disconnect();
+  }, [ids]);
+
+  return active;
+};
+
+const sectionIds = navLinks.map((l) => l.id);
+
+export const Navbar = ({ theme, onToggleTheme }) => {
+  const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const active = useActiveSection(sectionIds);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e) => e.key === "Escape" && setOpen(false);
+    const onResize = () => window.innerWidth >= 768 && setOpen(false);
+    window.addEventListener("keydown", onKey);
+    window.addEventListener("resize", onResize);
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      window.removeEventListener("resize", onResize);
+    };
+  }, [open]);
+
+  const nextTheme = theme === "dark" ? "light" : "dark";
 
   return (
-    <header className="sticky top-0 z-50 w-full hairline-b bg-[#07080a]">
-      <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-        
-        {/* Brand Monogram */}
-        <a href="#hero" className="flex items-center gap-3 group">
-          <div className="w-8 h-8 rounded-sm bg-[#0c0e13] border border-[#2a3040] flex items-center justify-center font-mono font-semibold text-xs text-white group-hover:border-blue-500 transition">
+    <header
+      className={`sticky top-0 z-50 border-b transition-colors duration-200 ${
+        scrolled || open
+          ? "border-line bg-[color-mix(in_srgb,var(--bg)_86%,transparent)] backdrop-blur-md"
+          : "border-transparent"
+      }`}
+    >
+      <div className="max-w-6xl mx-auto px-5 sm:px-8 h-16 flex items-center justify-between gap-4">
+        <a href="#top" className="flex items-center gap-3 group" onClick={() => setOpen(false)}>
+          <span
+            aria-hidden="true"
+            className="w-9 h-9 rounded-lg bg-surface border border-line-strong flex items-center justify-center font-mono font-medium text-sm text-accent group-hover:border-accent transition-colors"
+          >
             EB
-          </div>
-          <div className="flex flex-col">
-            <span className="text-xs font-bold tracking-tight text-white group-hover:text-blue-400 transition">
-              Ean Bynoe
-            </span>
-            <span className="text-[10px] font-mono text-slate-400">
-              Software & Systems
-            </span>
-          </div>
+          </span>
+          <span className="font-display font-bold text-fg text-base tracking-tight">{profile.name}</span>
         </a>
 
-        {/* Navigation Links (Me -> Skills -> Projects -> Credentials -> Contact) */}
-        <nav className="hidden md:flex items-center gap-8 text-xs font-mono text-slate-400">
-          <a href="#hero" className="hover:text-white transition">01. Overview</a>
-          <a href="#skills" className="hover:text-white transition">02. Skills</a>
-          <a href="#projects" className="hover:text-white transition">03. Projects</a>
-          <a href="#experience" className="hover:text-white transition">04. Credentials</a>
-          <a href="#contact" className="hover:text-white transition">05. Contact</a>
+        <nav aria-label="Primary" className="hidden md:flex items-center gap-1">
+          {navLinks.map((link) => {
+            const isActive = active === link.id;
+            return (
+              <a
+                key={link.id}
+                href={`#${link.id}`}
+                aria-current={isActive ? "true" : undefined}
+                className={`relative px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  isActive ? "text-fg" : "text-muted hover:text-fg"
+                }`}
+              >
+                {link.label}
+                <span
+                  aria-hidden="true"
+                  className={`absolute left-3 right-3 -bottom-px h-0.5 rounded-full bg-accent transition-opacity ${
+                    isActive ? "opacity-100" : "opacity-0"
+                  }`}
+                />
+              </a>
+            );
+          })}
         </nav>
 
-        {/* Right Status & Action */}
-        <div className="hidden sm:flex items-center gap-4">
-          <span className="text-[11px] font-mono text-slate-400 border-r border-[#1e222d] pr-4">
-            CO-OP // 2027
-          </span>
-          <a
-            href="#contact"
-            className="px-4 py-1.5 rounded-sm bg-white text-black text-xs font-semibold hover:bg-slate-200 transition"
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={onToggleTheme}
+            aria-label={`Switch to ${nextTheme} theme`}
+            title={`Switch to ${nextTheme} theme`}
+            className="w-10 h-10 rounded-lg flex items-center justify-center text-muted hover:text-fg hover:bg-surface-2 transition-colors"
           >
-            Contact
+            {theme === "dark" ? <Sun className="w-[18px] h-[18px]" /> : <Moon className="w-[18px] h-[18px]" />}
+          </button>
+
+          <a href="#contact" className="btn btn-primary btn-sm hidden sm:inline-flex">
+            Get in touch
           </a>
+
+          <button
+            type="button"
+            onClick={() => setOpen((v) => !v)}
+            aria-expanded={open}
+            aria-controls="mobile-menu"
+            aria-label={open ? "Close menu" : "Open menu"}
+            className="md:hidden w-10 h-10 rounded-lg flex items-center justify-center text-fg hover:bg-surface-2 transition-colors"
+          >
+            {open ? <Close className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
         </div>
-
-        {/* Mobile menu button */}
-        <button
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="md:hidden p-2 text-slate-400 hover:text-white"
-          aria-label="Toggle menu"
-        >
-          {mobileMenuOpen ? <HiX className="w-5 h-5" /> : <HiMenu className="w-5 h-5" />}
-        </button>
-
       </div>
 
-      {/* Mobile Menu Dropdown */}
-      {mobileMenuOpen && (
-        <div className="md:hidden hairline-t bg-[#07080a] px-6 py-4 space-y-3 text-xs font-mono text-slate-300">
-          <a href="#hero" onClick={() => setMobileMenuOpen(false)} className="block py-1.5 hover:text-white">
-            01. Overview
+      {open && (
+        <nav id="mobile-menu" aria-label="Mobile" className="md:hidden border-t border-line px-5 pb-5 pt-2">
+          <ul>
+            {navLinks.map((link) => (
+              <li key={link.id}>
+                <a
+                  href={`#${link.id}`}
+                  onClick={() => setOpen(false)}
+                  aria-current={active === link.id ? "true" : undefined}
+                  className={`flex items-center justify-between py-3.5 border-b border-line text-lg font-display font-semibold ${
+                    active === link.id ? "text-accent" : "text-fg"
+                  }`}
+                >
+                  {link.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+          <a href="#contact" onClick={() => setOpen(false)} className="btn btn-primary w-full mt-5 sm:hidden">
+            Get in touch
           </a>
-          <a href="#skills" onClick={() => setMobileMenuOpen(false)} className="block py-1.5 hover:text-white">
-            02. Skills
-          </a>
-          <a href="#projects" onClick={() => setMobileMenuOpen(false)} className="block py-1.5 hover:text-white">
-            03. Projects
-          </a>
-          <a href="#experience" onClick={() => setMobileMenuOpen(false)} className="block py-1.5 hover:text-white">
-            04. Credentials
-          </a>
-          <a href="#contact" onClick={() => setMobileMenuOpen(false)} className="block py-1.5 hover:text-white">
-            05. Contact
-          </a>
-        </div>
+        </nav>
       )}
     </header>
   );
