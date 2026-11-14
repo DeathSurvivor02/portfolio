@@ -13,7 +13,7 @@ const useTheme = () => {
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
     const meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) meta.setAttribute("content", theme === "dark" ? "#0c0d0f" : "#f6f4ee");
+    if (meta) meta.setAttribute("content", theme === "dark" ? "#07080a" : "#f5f7fa");
   }, [theme]);
 
   const toggle = useCallback(() => {

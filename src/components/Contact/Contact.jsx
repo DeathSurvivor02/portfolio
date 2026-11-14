@@ -10,8 +10,11 @@ export const Contact = () => {
       <Reveal className="card relative overflow-hidden p-7 sm:p-12 lg:p-16">
         <div
           aria-hidden="true"
-          className="absolute -top-32 -right-24 w-[28rem] h-[28rem] rounded-full pointer-events-none"
-          style={{ background: "radial-gradient(closest-side, var(--glow), transparent)" }}
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background:
+              "radial-gradient(28rem 20rem at 100% 0%, var(--glow-2), transparent 70%), radial-gradient(26rem 20rem at 62% 0%, var(--glow), transparent 70%)",
+          }}
         />
 
         <div className="relative max-w-2xl space-y-6">

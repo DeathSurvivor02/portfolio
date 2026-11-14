@@ -1,15 +1,13 @@
 import React, { useState } from "react";
 import { projects, skillGroups } from "../../data/site";
-import { ArrowUpRight, ChevronDown, GitHub } from "../ui/Icons";
-import { Reveal } from "../ui/Reveal";
+import { ArrowUpRight, GitHub } from "../ui/Icons";
 import { SectionHeader } from "../ui/SectionHeader";
-import { FlowDiagram } from "./FlowDiagram";
 import { ProjectDemo } from "./Demos";
 
-const toneDot = {
-  live: "bg-ok",
-  wip: "bg-warn",
-  neutral: "bg-subtle",
+const statusColor = {
+  live: "text-ok",
+  wip: "text-warn",
+  neutral: "text-muted",
 };
 
 const filters = [
@@ -19,44 +17,56 @@ const filters = [
 
 const countFor = (id) => (id === "all" ? projects.length : projects.filter((p) => p.skillGroups.includes(id)).length);
 
-const ProjectCard = ({ project, index }) => {
+const Pipeline = ({ nodes, title }) => (
+  <ol aria-label={`How data moves through ${title}`} className="pipeline">
+    {nodes.map((node) => (
+      <li key={node.label}>
+        <span className="block text-[0.9375rem] font-semibold text-fg leading-snug">{node.label}</span>
+        <span className="block text-sm text-subtle mt-0.5">{node.sub}</span>
+      </li>
+    ))}
+  </ol>
+);
+
+const ProjectEntry = ({ project }) => {
   const [open, setOpen] = useState(false);
   const detailsId = `${project.id}-details`;
+  const titleId = `${project.id}-title`;
 
   return (
-    <article aria-labelledby={`${project.id}-title`} className="card overflow-hidden">
-      <div className="grid md:grid-cols-[minmax(0,1fr)_17.5rem] gap-6 md:gap-8 p-5 sm:p-7">
-        <div className="space-y-4 min-w-0">
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-xs font-mono">
-            <span className="text-accent font-medium">{String(index + 1).padStart(2, "0")}</span>
-            <span className="inline-flex items-center gap-2 text-muted">
-              <span aria-hidden="true" className={`w-1.5 h-1.5 rounded-full ${toneDot[project.status.tone]}`} />
-              {project.status.label}
-            </span>
-          </div>
+    <li className="border-b border-line">
+      <article
+        aria-labelledby={titleId}
+        className="grid lg:grid-cols-12 gap-x-10 gap-y-5 py-10 sm:py-12"
+      >
+        <header className="lg:col-span-4 lg:sticky lg:top-24 lg:self-start space-y-2">
+          <h3 id={titleId} className="text-2xl sm:text-[1.75rem] font-bold text-fg leading-tight">
+            {project.title}
+          </h3>
+          <p className="text-[0.9375rem] text-muted leading-snug">{project.subtitle}</p>
+          <p className={`text-sm font-medium ${statusColor[project.status.tone]}`}>{project.status.label}</p>
+        </header>
 
-          <div className="space-y-1.5">
-            <h3 id={`${project.id}-title`} className="text-2xl sm:text-[1.75rem] font-bold text-fg leading-tight">
-              {project.title}
-            </h3>
-            <p className="text-sm font-mono text-subtle">{project.subtitle}</p>
-          </div>
+        <div className="lg:col-span-8 space-y-7 min-w-0">
+          <p className="text-lg text-fg/90 leading-relaxed">{project.description}</p>
 
-          <p className="text-muted leading-relaxed">{project.description}</p>
+          <Pipeline nodes={project.flow} title={project.title} />
 
-          <ul aria-label="Tech stack" className="flex flex-wrap gap-1.5">
-            {project.stack.map((tech) => (
-              <li key={tech} className="chip">
-                {tech}
-              </li>
-            ))}
-          </ul>
+          <dl className="text-[0.9375rem]">
+            <dt className="text-subtle">Built with</dt>
+            <dd className="text-fg mt-0.5">{project.stack.join(" · ")}</dd>
+          </dl>
 
-          <div className="flex flex-wrap items-center gap-2.5 pt-2">
-            <a href={project.repoUrl} target="_blank" rel="noopener noreferrer" className="btn btn-secondary btn-sm">
+          <div className="flex flex-wrap items-center gap-x-7 gap-y-3 text-[0.9375rem] font-medium">
+            <a
+              href={project.repoUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="link inline-flex items-center gap-2"
+            >
               <GitHub />
-              Repository
-              <ArrowUpRight className="w-3.5 h-3.5 text-subtle" />
+              View repository
+              <ArrowUpRight className="w-3.5 h-3.5" />
               <span className="sr-only">for {project.title} (opens in a new tab)</span>
             </a>
             <button
@@ -64,36 +74,28 @@ const ProjectCard = ({ project, index }) => {
               onClick={() => setOpen((v) => !v)}
               aria-expanded={open}
               aria-controls={detailsId}
-              className="btn btn-sm text-muted hover:text-fg hover:bg-surface-2"
+              className="link inline-flex items-center gap-2"
             >
-              {open ? "Hide details" : project.demo ? "How it works + demo" : "How it works"}
-              <ChevronDown className={`w-4 h-4 transition-transform ${open ? "rotate-180" : ""}`} />
+              <span aria-hidden="true" className="font-mono w-3 text-center">
+                {open ? "−" : "+"}
+              </span>
+              {project.demo ? "Engineering notes & demo" : "Engineering notes"}
             </button>
           </div>
-        </div>
 
-        <FlowDiagram nodes={project.flow} title={project.title} />
-      </div>
-
-      <div id={detailsId} hidden={!open} className="border-t border-line bg-surface-2/50">
-        <div className={`grid gap-8 p-5 sm:p-7 ${project.demo ? "lg:grid-cols-2" : ""}`}>
-          <div className="space-y-3">
-            <h4 className="eyebrow">Engineering notes</h4>
-            <ol className={`grid gap-x-8 ${project.demo ? "" : "md:grid-cols-2"}`}>
-              {project.notes.map((note, i) => (
-                <li key={note} className="flex gap-3 py-2.5 border-b border-line text-[0.9375rem] text-muted leading-relaxed">
-                  <span aria-hidden="true" className="font-mono text-xs text-accent pt-1">
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
-                  <span>{note}</span>
+          <div id={detailsId} hidden={!open} className="space-y-8 pt-1">
+            <ul className="grid sm:grid-cols-2 gap-x-8 gap-y-5">
+              {project.notes.map((note) => (
+                <li key={note} className="border-l border-line-strong pl-4 text-[0.9375rem] text-muted leading-relaxed">
+                  {note}
                 </li>
               ))}
-            </ol>
+            </ul>
+            {project.demo && open && <ProjectDemo kind={project.demo} />}
           </div>
-          {project.demo && open && <ProjectDemo kind={project.demo} />}
         </div>
-      </div>
-    </article>
+      </article>
+    </li>
   );
 };
 
@@ -102,45 +104,42 @@ export const Projects = ({ filter = "all", onFilterChange }) => {
 
   return (
     <section id="projects" aria-labelledby="projects-title" className="space-y-8">
-      <SectionHeader
-        id="projects-title"
-        eyebrow="Projects"
-        title="Systems I've built"
-        description="Each one shows how data moves through it. Open a project for the engineering notes and a small simulated demo."
-      />
+      <SectionHeader id="projects-title" eyebrow="Projects" title="Selected work" />
 
-      <div role="group" aria-label="Filter projects by skill area" className="flex flex-wrap gap-2">
-        {filters.map((f) => {
-          const selected = filter === f.id;
-          return (
-            <button
-              key={f.id}
-              type="button"
-              aria-pressed={selected}
-              onClick={() => onFilterChange(f.id)}
-              className={`inline-flex items-center gap-2 min-h-10 rounded-full border px-4 text-sm font-medium transition-colors ${
-                selected
-                  ? "border-fg bg-fg text-bg"
-                  : "border-line-strong text-muted hover:text-fg hover:border-fg"
-              }`}
-            >
-              {f.label}
-              <span className={`font-mono text-xs ${selected ? "opacity-70" : "text-subtle"}`}>{countFor(f.id)}</span>
-            </button>
-          );
-        })}
-      </div>
+      <div>
+        <div
+          role="group"
+          aria-label="Filter projects by skill area"
+          className="flex gap-x-7 overflow-x-auto border-b border-line-strong"
+        >
+          {filters.map((f) => {
+            const selected = filter === f.id;
+            return (
+              <button
+                key={f.id}
+                type="button"
+                aria-pressed={selected}
+                onClick={() => onFilterChange(f.id)}
+                className={`shrink-0 -mb-px py-3 border-b-2 text-[0.9375rem] font-medium whitespace-nowrap transition-colors ${
+                  selected ? "border-accent text-fg" : "border-transparent text-muted hover:text-fg"
+                }`}
+              >
+                {f.label}
+                <span className="ml-1.5 text-sm font-normal text-subtle">{countFor(f.id)}</span>
+              </button>
+            );
+          })}
+        </div>
 
-      <p role="status" className="sr-only">
-        Showing {visible.length} of {projects.length} projects
-      </p>
+        <p role="status" className="sr-only">
+          Showing {visible.length} of {projects.length} projects
+        </p>
 
-      <div className="space-y-5">
-        {visible.map((project) => (
-          <Reveal key={project.id}>
-            <ProjectCard project={project} index={projects.indexOf(project)} />
-          </Reveal>
-        ))}
+        <ol>
+          {visible.map((project) => (
+            <ProjectEntry key={project.id} project={project} />
+          ))}
+        </ol>
       </div>
     </section>
   );

@@ -136,7 +136,7 @@ const SitelineDemo = () => {
               <tr key={row.id} className="text-fg">
                 <td className="px-4 py-2 whitespace-nowrap">{row.store}</td>
                 <td className="px-4 py-2 text-muted">{row.sku}</td>
-                <td className={`px-4 py-2 text-right whitespace-nowrap ${row.delta > 0 ? "text-ok" : "text-warn"}`}>
+                <td className={`px-4 py-2 text-right whitespace-nowrap ${row.delta > 0 ? "text-ok" : "text-accent-2"}`}>
                   {row.delta > 0 ? "+" : "−"}
                   {Math.abs(row.delta)} units
                 </td>
@@ -218,11 +218,10 @@ export const ProjectDemo = ({ kind }) => {
   const Demo = demos[kind];
   if (!Demo) return null;
   return (
-    <div className="space-y-3">
-      <div className="flex items-center justify-between gap-3">
-        <h4 className="eyebrow">Try it</h4>
-        <span className="chip">Simulated · sample data</span>
-      </div>
+    <div className="space-y-3 max-w-xl">
+      <h4 className="text-[0.9375rem] font-semibold text-fg">
+        Try it <span className="font-normal text-subtle">— simulated in your browser with sample data</span>
+      </h4>
       <Demo />
     </div>
   );
