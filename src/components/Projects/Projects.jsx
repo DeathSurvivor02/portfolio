@@ -110,7 +110,7 @@ export const Projects = ({ filter = "all", onFilterChange }) => {
         <div
           role="group"
           aria-label="Filter projects by skill area"
-          className="flex gap-x-7 overflow-x-auto border-b border-line-strong"
+          className="flex gap-x-5 overflow-x-auto overflow-y-hidden border-b border-line-strong"
         >
           {filters.map((f) => {
             const selected = filter === f.id;
@@ -120,7 +120,7 @@ export const Projects = ({ filter = "all", onFilterChange }) => {
                 type="button"
                 aria-pressed={selected}
                 onClick={() => onFilterChange(f.id)}
-                className={`shrink-0 -mb-px py-3 border-b-2 text-[0.9375rem] font-medium whitespace-nowrap transition-colors ${
+                className={`shrink-0 px-1 py-3 border-b-2 focus-visible:!-outline-offset-2 text-[0.9375rem] font-medium whitespace-nowrap transition-colors ${
                   selected ? "border-accent text-fg" : "border-transparent text-muted hover:text-fg"
                 }`}
               >
