@@ -69,6 +69,18 @@ const ProjectEntry = ({ project }) => {
               <ArrowUpRight className="w-3.5 h-3.5" />
               <span className="sr-only">for {project.title} (opens in a new tab)</span>
             </a>
+            {project.liveUrl && (
+              <a
+                href={project.liveUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="link inline-flex items-center gap-2"
+              >
+                Live preview
+                <ArrowUpRight className="w-3.5 h-3.5" />
+                <span className="sr-only">for {project.title} (opens in a new tab)</span>
+              </a>
+            )}
             <button
               type="button"
               onClick={() => setOpen((v) => !v)}

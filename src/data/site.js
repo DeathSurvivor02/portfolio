@@ -123,6 +123,7 @@ export const projects = [
     status: { label: "In development", tone: "wip" },
     skillGroups: ["fullstack", "systems"],
     repoUrl: "https://github.com/DeathSurvivor02/Transit-Routing-Engine",
+    liveUrl: "https://web-preview-rose.vercel.app",
     description:
       "Algorithmic transit routing service resolving multi-hop transfers, schedule windows, and walking links across transit nodes, paired with a Flutter mobile client rendering vector route polylines.",
     flow: [
@@ -142,12 +143,12 @@ export const projects = [
   {
     id: "personal-dashboard",
     title: "Personal Dashboard",
-    subtitle: "Productivity, POS support & R&D simulation command center",
+    subtitle: "Desktop command center for POS support, R&D & daily widgets",
     status: { label: "Active", tone: "neutral" },
     skillGroups: ["systems", "fullstack"],
     repoUrl: "https://github.com/DeathSurvivor02/personal-dashboard",
     description:
-      "Modular desktop command center built in Rust with Dioxus combining YM Inc. POS support tracking, academic course deadlines, physics simulation R&D notes, and focus utilities.",
+      "Modular desktop command center built in Rust with Dioxus combining YM Inc. POS support ticket tracking, active R&D notes, and live GitHub, Chess.com, and Daily Wordle widgets.",
     flow: [
       { label: "Dioxus Shell", sub: "Sidebar & filters" },
       { label: "Rust State Core", sub: "Tasks & deadlines" },
