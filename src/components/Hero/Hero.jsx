@@ -1,6 +1,6 @@
 import React from "react";
 import { profile } from "../../data/site";
-import { ArrowDown, ArrowUpRight, GitHub } from "../ui/Icons";
+import { ArrowDown, ArrowUpRight, GitHub, LinkedIn } from "../ui/Icons";
 import { CopyEmailButton } from "../ui/CopyEmailButton";
 
 export const Hero = () => {
@@ -32,6 +32,12 @@ export const Hero = () => {
             <a href={profile.github} target="_blank" rel="noopener noreferrer" className="btn btn-secondary">
               <GitHub />
               GitHub
+              <ArrowUpRight className="w-3.5 h-3.5 text-subtle" />
+              <span className="sr-only">(opens in a new tab)</span>
+            </a>
+            <a href={profile.linkedin} target="_blank" rel="noopener noreferrer" className="btn btn-secondary">
+              <LinkedIn />
+              LinkedIn
               <ArrowUpRight className="w-3.5 h-3.5 text-subtle" />
               <span className="sr-only">(opens in a new tab)</span>
             </a>

@@ -1,6 +1,6 @@
 import React from "react";
 import { profile } from "../../data/site";
-import { ArrowUpRight, GitHub, Mail } from "../ui/Icons";
+import { ArrowUpRight, GitHub, LinkedIn, Mail } from "../ui/Icons";
 import { CopyEmailButton } from "../ui/CopyEmailButton";
 import { Reveal } from "../ui/Reveal";
 
@@ -23,7 +23,7 @@ export const Contact = () => {
             Contact
           </p>
           <h2 id="contact-title" className="text-3xl sm:text-5xl font-extrabold text-fg leading-[1.08]">
-            Available for software engineering co-op roles in Winter &amp; Summer 2027.
+            Available for full-time software engineering roles from Spring 2027.
           </h2>
           <p className="text-muted text-lg leading-relaxed">
             Interested in backend engineering, distributed systems, developer tooling, or low-latency systems. Email
@@ -39,6 +39,12 @@ export const Contact = () => {
             <a href={profile.github} target="_blank" rel="noopener noreferrer" className="btn btn-secondary">
               <GitHub />
               GitHub
+              <ArrowUpRight className="w-3.5 h-3.5 text-subtle" />
+              <span className="sr-only">(opens in a new tab)</span>
+            </a>
+            <a href={profile.linkedin} target="_blank" rel="noopener noreferrer" className="btn btn-secondary">
+              <LinkedIn />
+              LinkedIn
               <ArrowUpRight className="w-3.5 h-3.5 text-subtle" />
               <span className="sr-only">(opens in a new tab)</span>
             </a>

@@ -3,11 +3,12 @@
 export const profile = {
   name: "Ean Bynoe",
   role: "Software Engineer",
-  email: "bynoeean@gmail.com",
+  email: "eanbynoe@gmail.com",
   github: "https://github.com/DeathSurvivor02",
   githubLabel: "github.com/DeathSurvivor02",
+  linkedin: "https://www.linkedin.com/in/ean-bynoe",
   location: "Toronto, ON",
-  availability: "Open to co-op roles · Winter / Summer 2027",
+  availability: "Open to new grad roles · Graduating Spring 2027",
   summary:
     "Engineering full-stack inventory platforms, REST APIs, automated developer telemetry daemons, and algorithmic transit routing engines. Grounded in Computer Science & Mathematics with production C#, TypeScript, Python, and C/C++.",
   facts: [
@@ -15,7 +16,7 @@ export const profile = {
     { label: "Studying", value: "Software Engineering Technology (Co-op), Centennial College" },
     { label: "Background", value: "Computer Science & Mathematics, UWI Cave Hill" },
     { label: "Core stack", value: "C# · TypeScript · Python · Dart" },
-    { label: "Available", value: "Winter / Summer 2027" },
+    { label: "Available", value: "Spring 2027" },
   ],
 };
 
@@ -36,6 +37,8 @@ export const skillGroups = [
       { name: "Python (Discord / Async)", tag: "Automation" },
       { name: "C / C++ (Memory & Wasm)", tag: "Systems" },
       { name: "TypeScript / JavaScript", tag: "Core" },
+      { name: "Kotlin", tag: "JVM / Backend" },
+      { name: "OAuth 2.0 / JWT", tag: "Auth" },
       { name: "SQL (PostgreSQL, Neon, MS SQL)", tag: "Relational" },
     ],
   },
@@ -69,13 +72,13 @@ export const skillGroups = [
 export const projects = [
   {
     id: "siteline-ym",
-    title: "SiteLine — YM Inc Store Tracking",
+    title: "SiteLine — Retail Store Tracking",
     subtitle: "Retail inventory, importer & multi-store tracking platform",
-    status: { label: "Production system", tone: "live" },
+    status: { label: "Prototype", tone: "wip" },
     skillGroups: ["systems", "fullstack", "infra"],
     repoUrl: "https://github.com/DeathSurvivor02/ym-inc-store-tracking",
     description:
-      "Full-stack store tracking and inventory management suite built for YM Inc retail operations. Combines a C# desktop client, automated CSV/inventory importer, and React dashboard backed by Neon PostgreSQL.",
+      "A self-initiated store-tracking and inventory platform, built on my own time with simulated data and modeled on a retail POS rollout workflow. Combines a C# desktop client, automated CSV/inventory importer, and React dashboard backed by Neon PostgreSQL.",
     flow: [
       { label: "Store Importer", sub: "SKU / batch sync" },
       { label: "C# / Node Engine", sub: "Validation & ledger" },
@@ -163,6 +166,21 @@ export const projects = [
 
 export const timeline = [
   {
+    kind: "Work",
+    period: "June 2026 — Present",
+    current: true,
+    title: "POS Project Implementation Support",
+    org: "YM Inc. · Toronto",
+    body: "Support POS rollouts across retail stores, triaging live incidents and coordinating store-level deployments.",
+  },
+  {
+    kind: "Work",
+    period: "2025",
+    title: "Operations Intern (Short-Term)",
+    org: "Marsh Canada · Toronto",
+    body: "Analyzed operational data across business units and maintained process documentation.",
+  },
+  {
     kind: "Education",
     period: "2024 — Present",
     current: true,
@@ -180,7 +198,7 @@ export const timeline = [
   {
     kind: "Education",
     period: "2021 — 2023",
-    title: "B.Sc. in Computer Science & Mathematics",
+    title: "Computer Science & Mathematics (B.Sc. coursework, completed through Year 3)",
     org: "UWI Cave Hill · Barbados",
     body: "Coursework in Data Structures & Algorithms, Object-Oriented Programming (Java), Systems Programming (C++), Calculus I & II, and Discrete Math.",
   },
