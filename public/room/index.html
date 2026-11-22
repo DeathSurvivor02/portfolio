@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ean Bynoe — 3D Room</title>
+<meta name="description" content="Ean Bynoe's portfolio as a 3D room. Click each object to see a project.">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0}
+html,body{height:100%;overflow:hidden;background:#0b1220;color:#cbd5e1;font:400 15px/1.55 "IBM Plex Sans",system-ui,sans-serif}
+canvas{display:block;position:fixed;inset:0;touch-action:none}
+h1,h2{font-family:"Bricolage Grotesque",sans-serif;color:#f1f5f9;letter-spacing:-.02em}
+.hud{position:fixed;z-index:5}
+.intro{top:20px;left:20px;max-width:21rem;pointer-events:none}
+.intro h1{font-size:1.75rem;line-height:1.1}
+.intro p{margin-top:.35rem;color:#94a3b8;font-size:.9rem}
+.intro .hint{margin-top:.9rem;font:500 .72rem "IBM Plex Mono",monospace;letter-spacing:.1em;text-transform:uppercase;color:#5eead4}
+.tabs{left:50%;bottom:18px;transform:translateX(-50%);display:flex;gap:.5rem;flex-wrap:wrap;justify-content:center;max-width:calc(100vw - 24px)}
+.tabs button,.btn{font:500 .78rem "IBM Plex Mono",monospace;letter-spacing:.04em;color:#e2e8f0;background:rgba(15,23,42,.8);border:1px solid #334155;border-radius:999px;padding:.5rem .95rem;cursor:pointer;backdrop-filter:blur(8px);text-decoration:none}
+.tabs button:hover,.tabs button.on,.btn:hover{border-color:#5eead4;color:#5eead4}
+:focus-visible{outline:2px solid #5eead4;outline-offset:3px}
+.panel{top:20px;right:20px;width:min(24rem,calc(100vw - 40px));max-height:calc(100vh - 100px);overflow:auto;background:rgba(11,18,32,.92);border:1px solid #334155;border-radius:16px;padding:1.4rem;backdrop-filter:blur(12px);transform:translateX(120%);opacity:0;transition:transform .35s cubic-bezier(.2,.7,.2,1),opacity .25s}
+.panel.open{transform:none;opacity:1}
+.panel .st{font:500 .7rem "IBM Plex Mono",monospace;letter-spacing:.12em;text-transform:uppercase;color:#5eead4}
+.panel h2{font-size:1.5rem;margin:.3rem 0 .6rem;line-height:1.1}
+.panel p{font-size:.92rem}
+.chips{display:flex;flex-wrap:wrap;gap:.4rem;margin:1rem 0 0;padding:0;list-style:none}
+.chips li{font:500 .7rem "IBM Plex Mono",monospace;background:rgba(94,234,212,.1);color:#5eead4;border-radius:999px;padding:.18rem .7rem}
+.links{display:flex;gap:.6rem;margin-top:1.1rem;flex-wrap:wrap}
+.close{position:absolute;top:.8rem;right:.8rem;width:2rem;height:2rem;border-radius:50%;padding:0;display:grid;place-items:center;font-size:1rem}
+.fallback{position:fixed;inset:0;display:none;place-items:center;padding:24px;text-align:center;z-index:10;background:#0b1220}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media(max-width:640px){.intro h1{font-size:1.35rem}.intro p{display:none}.panel{top:auto;bottom:70px;right:12px;left:12px;width:auto;max-height:55vh}}
+</style>
+<script type="importmap">
+{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"}}
+</script>
+</head>
+<body>
+<div class="hud intro"><h1>Ean Bynoe</h1><p>Software engineer in Toronto. Backend, retail data systems, low-latency tooling.</p><p class="hint">Drag to look · click an object</p></div>
+<nav class="hud tabs" id="tabs" aria-label="Projects"></nav>
+<aside class="hud panel" id="panel" aria-live="polite" aria-label="Details"></aside>
+<div class="fallback" id="fallback"><div><h1 style="font-size:2rem">Ean Bynoe</h1><p style="margin-top:.5rem">Your browser could not start 3D. See my work on <a class="btn" href="https://github.com/DeathSurvivor02">GitHub</a></p></div></div>
+
+<script type="module">
+import * as THREE from "three";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+
+const items = {
+  about: { tab: "About", status: "Hello", title: "About me",
+    desc: "Software engineer in Toronto finishing Software Engineering Technology (Co-op) at Centennial College. Supporting POS rollouts at YM Inc. Open to new grad roles, graduating Spring 2027.",
+    stack: ["C#", "TypeScript", "Python", "Dart", "C / C++"],
+    links: [["GitHub", "https://github.com/DeathSurvivor02"], ["LinkedIn", "https://www.linkedin.com/in/ean-bynoe"], ["Email", "mailto:eanbynoe@gmail.com"]],
+    focus: [[3.2, 3.4, -5.9], [3.4, 3.2, -1.4]] },
+  siteline: { tab: "SiteLine", status: "Prototype", title: "SiteLine — Retail Store Tracking",
+    desc: "Inventory, importer and multi-store tracking platform. A C# desktop client and batch CSV importer feed Neon PostgreSQL, with a React dashboard for per-store stock health.",
+    stack: ["C# / .NET", "React", "TypeScript", "PostgreSQL", "Docker"],
+    links: [["Code", "https://github.com/DeathSurvivor02/ym-inc-store-tracking"]],
+    focus: [[3.9, 0.9, -3.8], [6.3, 3.2, 0]] },
+  valorant: { tab: "Valorant-API", status: "Active", title: "Valorant-API",
+    desc: "Node.js and Express REST service for player profiles, rank metadata and match stats. Stateless Vercel deployment with a rate-limit guard protecting the upstream token.",
+    stack: ["Node.js", "Express", "REST", "CORS", "Vercel"],
+    links: [["Code", "https://github.com/DeathSurvivor02/Valorant-API"]],
+    focus: [[-3.9, 1.4, -4.6], [-1.4, 2.8, -1.6]] },
+  transit: { tab: "Transit Engine", status: "In development", title: "Transit Routing Engine",
+    desc: "Multi-modal routing: A* search over a station graph with transfer penalties and headways, paired with a Flutter client drawing route polylines on OpenStreetMap.",
+    stack: ["Dart", "Flutter", "A* search", "Node.js", "GeoJSON"],
+    links: [["Code", "https://github.com/DeathSurvivor02/Transit-Routing-Engine"], ["Live", "https://web-preview-rose.vercel.app"]],
+    focus: [[-5.9, 2.7, 0.5], [-2.2, 2.9, 2.6]] },
+  dashboard: { tab: "Dashboard", status: "Active", title: "Personal Dashboard",
+    desc: "Desktop command center in Rust with Dioxus: POS support Kanban, assignment tracking, an R&D notes hub, and live GitHub, Chess.com and Wordle widgets.",
+    stack: ["Rust", "Dioxus", "Serde", "Chrono"],
+    links: [["Code", "https://github.com/DeathSurvivor02/personal-dashboard"]],
+    focus: [[0, 1.75, -4.2], [1.4, 2.7, -0.6]] },
+};
+
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+let renderer;
+try {
+  renderer = new THREE.WebGLRenderer({ antialias: true });
+} catch { document.getElementById("fallback").style.display = "grid"; throw 0; }
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+document.body.prepend(renderer.domElement);
+renderer.domElement.setAttribute("aria-label", "3D room. Use the buttons below to open each project.");
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x0b1220);
+const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 100);
+const HOME = [new THREE.Vector3(9, 6.8, 9), new THREE.Vector3(0, 1.6, -1)];
+camera.position.copy(HOME[0]);
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.target.copy(HOME[1]);
+Object.assign(controls, { enableDamping: true, minDistance: 3, maxDistance: 20, minPolarAngle: 0.35, maxPolarAngle: Math.PI / 2 - 0.05, minAzimuthAngle: -0.3, maxAzimuthAngle: 1.9, enablePan: false });
+
+/* ---------- helpers ---------- */
+const mat = (color, o = {}) => new THREE.MeshStandardMaterial({ color, roughness: 0.7, metalness: 0.05, ...o });
+function box(w, h, d, color, x, y, z, parent = scene, o = {}) {
+  const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat(color, o));
+  m.position.set(x, y, z); m.castShadow = m.receiveShadow = true; parent.add(m); return m;
+}
+function cyl(rt, rb, h, color, x, y, z, parent = scene, seg = 24, o = {}) {
+  const m = new THREE.Mesh(new THREE.CylinderGeometry(rt, rb, h, seg), mat(color, o));
+  m.position.set(x, y, z); m.castShadow = m.receiveShadow = true; parent.add(m); return m;
+}
+function canvasTex(w, h, draw) {
+  const c = document.createElement("canvas"); c.width = w; c.height = h;
+  draw(c.getContext("2d"), w, h);
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; return t;
+}
+const mono = '500 22px "IBM Plex Mono", monospace';
+
+/* ---------- lights ---------- */
+scene.add(new THREE.HemisphereLight(0xbfd4ff, 0x3b2f2a, 1.25));
+const sun = new THREE.DirectionalLight(0xfff1dd, 1.6);
+sun.position.set(6, 11, 7); sun.castShadow = true;
+sun.shadow.mapSize.set(2048, 2048);
+Object.assign(sun.shadow.camera, { left: -10, right: 10, top: 10, bottom: -10, near: 1, far: 30 });
+sun.shadow.bias = -0.0004;
+scene.add(sun);
+
+/* ---------- room shell ---------- */
+const floorTex = canvasTex(512, 512, (g, w, h) => {
+  const cols = ["#8a6a4b", "#947352", "#7d5f42", "#8f6e4d"];
+  for (let i = 0; i < 8; i++) { g.fillStyle = cols[i % 4]; g.fillRect(0, i * h / 8, w, h / 8); g.fillStyle = "rgba(0,0,0,.28)"; g.fillRect(0, i * h / 8, w, 3); g.fillRect(((i * 97) % w), i * h / 8, 3, h / 8); }
+});
+floorTex.wrapS = floorTex.wrapT = THREE.RepeatWrapping; floorTex.repeat.set(3, 3);
+const floor = new THREE.Mesh(new THREE.PlaneGeometry(12, 12), new THREE.MeshStandardMaterial({ map: floorTex, roughness: 0.85 }));
+floor.rotation.x = -Math.PI / 2; floor.receiveShadow = true; scene.add(floor);
+const wallC = 0x2b3b5e;
+box(12, 6, 0.2, wallC, 0, 3, -6.1);          // back wall
+box(0.2, 6, 12.4, 0x26355a, -6.1, 3, 0);     // left wall
+box(12.4, 0.25, 0.3, 0x0f172a, 0, 0.12, -5.9); // baseboards
+box(0.3, 0.25, 12, 0x0f172a, -5.9, 0.12, 0);
+
+/* ---------- dressing ---------- */
+const rug = new THREE.Mesh(new THREE.CircleGeometry(2.6, 48), mat(0x0f766e)); rug.rotation.x = -Math.PI / 2; rug.position.set(0.5, 0.012, 1.2); rug.receiveShadow = true; scene.add(rug);
+const rug2 = new THREE.Mesh(new THREE.RingGeometry(2.1, 2.3, 48), mat(0x5eead4)); rug2.rotation.x = -Math.PI / 2; rug2.position.set(0.5, 0.02, 1.2); scene.add(rug2);
+// window on left wall
+const sky = canvasTex(256, 256, (g, w, h) => { const gr = g.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, "#1e3a8a"); gr.addColorStop(1, "#fb7185"); g.fillStyle = gr; g.fillRect(0, 0, w, h); g.fillStyle = "#fff"; for (let i = 0; i < 40; i++) g.fillRect((i * 53) % w, (i * 31) % (h * .6), 2, 2); });
+const win = new THREE.Mesh(new THREE.PlaneGeometry(2.4, 2.6), new THREE.MeshBasicMaterial({ map: sky })); win.rotation.y = Math.PI / 2; win.position.set(-5.99, 3.4, 3.3); scene.add(win);
+box(0.12, 2.8, 0.12, 0x0f172a, -5.97, 3.4, 2.05); box(0.12, 2.8, 0.12, 0x0f172a, -5.97, 3.4, 4.55);
+box(0.12, 0.12, 2.6, 0x0f172a, -5.97, 2.05, 3.3); box(0.12, 0.12, 2.6, 0x0f172a, -5.97, 4.75, 3.3);
+// plant
+cyl(0.38, 0.3, 0.6, 0xc2410c, 5.0, 0.3, 4.6);
+[[0, 1.0, 0, .42], [.25, .85, .1, .3], [-.22, .9, -.12, .32], [.05, 1.3, .1, .28]].forEach(([x, y, z, r]) => { const s = new THREE.Mesh(new THREE.SphereGeometry(r, 16, 12), mat(0x22c55e)); s.position.set(5 + x, y, 4.6 + z); s.castShadow = true; scene.add(s); });
+// chair
+const chair = new THREE.Group(); chair.position.set(0.3, 0, -2.5); chair.rotation.y = 0.35; scene.add(chair);
+box(1, 0.12, 1, 0x334155, 0, 0.95, 0, chair); box(1, 1.1, 0.12, 0x334155, 0, 1.55, -0.45, chair); cyl(0.06, 0.06, 0.9, 0x0f172a, 0, 0.45, 0, chair, 12); cyl(0.5, 0.5, 0.06, 0x0f172a, 0, 0.05, 0, chair, 5);
+
+/* ---------- interactive objects ---------- */
+const groups = {};
+const mk = (id, x, y, z) => { const g = new THREE.Group(); g.position.set(x, y, z); g.userData.id = id; scene.add(g); groups[id] = g; return g; };
+
+// DASHBOARD: desk + monitor
+const desk = mk("dashboard", 0, 0, -4.2);
+box(5, 0.16, 2, 0x92683f, 0, 1.45, 0, desk);
+[[-2.3, -.9], [2.3, -.9], [-2.3, .9], [2.3, .9]].forEach(([x, z]) => box(0.14, 1.4, 0.14, 0x0f172a, x, 0.7, z, desk));
+cyl(0.35, 0.4, 0.06, 0x0f172a, 0, 1.56, -0.3, desk); box(0.12, 0.55, 0.1, 0x0f172a, 0, 1.85, -0.3, desk);
+box(2.5, 1.5, 0.12, 0x0f172a, 0, 2.55, -0.32, desk);
+const screenTex = canvasTex(640, 380, (g, w, h) => {
+  g.fillStyle = "#0b1220"; g.fillRect(0, 0, w, h);
+  g.fillStyle = "#12151c"; g.fillRect(0, 0, 130, h);
+  g.fillStyle = "#5eead4"; g.fillRect(16, 20, 40, 8); g.fillStyle = "#334155";
+  for (let i = 0; i < 5; i++) g.fillRect(16, 60 + i * 34, 90, 10);
+  [[150, 20], [330, 20], [150, 200], [330, 200]].forEach(([x, y], i) => { g.fillStyle = "#12151c"; g.fillRect(x, y, 170, 160); g.strokeStyle = "#1e222d"; g.strokeRect(x, y, 170, 160); g.fillStyle = ["#60a5fa", "#fb7185", "#4ade80", "#fbbf24"][i]; g.fillRect(x + 14, y + 14, 60, 8); g.fillStyle = "#334155"; for (let j = 0; j < 4; j++) g.fillRect(x + 14, y + 44 + j * 24, 90 + (j * 17) % 50, 8); });
+  g.fillStyle = "#12151c"; g.fillRect(520, 20, 100, 340); g.fillStyle = "#4ade80"; g.fillRect(534, 40, 40, 8);
+});
+const scr = new THREE.Mesh(new THREE.PlaneGeometry(2.3, 1.3), new THREE.MeshBasicMaterial({ map: screenTex })); scr.position.set(0, 2.55, -0.255); desk.add(scr); scr.userData.noGlow = true;
+box(1.2, 0.05, 0.45, 0x1e293b, -0.5, 1.56, 0.45, desk); // keyboard
+cyl(0.16, 0.14, 0.3, 0xf1f5f9, 1.8, 1.68, 0.3, desk, 20); // mug
+// lamp
+cyl(0.25, 0.3, 0.06, 0x0f172a, -1.9, 1.56, -0.4, desk); cyl(0.04, 0.04, 1, 0x94a3b8, -1.9, 2.05, -0.4, desk, 8);
+const shade = cyl(0.12, 0.4, 0.4, 0xfbbf24, -1.9, 2.6, -0.4, desk, 20, { emissive: 0xfbbf24, emissiveIntensity: 0.9 }); shade.userData.noGlow = true;
+const lampLight = new THREE.PointLight(0xffc97a, 14, 8, 1.6); lampLight.position.set(-1.9, 2.3, -3.9); scene.add(lampLight);
+
+// SITELINE: stack of crates
+const crates = mk("siteline", 4, 0, -3.8);
+const labelTex = canvasTex(256, 256, (g, w, h) => { g.fillStyle = "#c9a26b"; g.fillRect(0, 0, w, h); g.fillStyle = "#f8fafc"; g.fillRect(36, 70, 184, 120); g.fillStyle = "#0f172a"; for (let i = 0; i < 34; i++) g.fillRect(48 + i * 5, 84, 1 + (i * 7) % 3, 60); g.font = '600 20px "IBM Plex Mono"'; g.fillText("SKU 4821-07", 52, 172); });
+const crateM = () => [mat(0xb98b53), mat(0xb98b53), mat(0xc9a26b), mat(0xa57a45), new THREE.MeshStandardMaterial({ map: labelTex, roughness: .8 }), mat(0xb98b53)];
+[[0, .5, 0, 1.0], [1.15, .5, .1, 1.0], [.5, 1.45, .05, .9], [-1.1, .4, .4, .8]].forEach(([x, y, z, s]) => { const m = new THREE.Mesh(new THREE.BoxGeometry(s, s, s), crateM()); m.position.set(x, s / 2, z); m.rotation.y = (x * .3); m.castShadow = m.receiveShadow = true; if (y > 1) m.position.y = 1 + s / 2; crates.add(m); });
+{ const tape = new THREE.Mesh(new THREE.BoxGeometry(.2, .01, 1.02), mat(0xfb7185)); tape.position.set(.5, 1 + .9 + .0, .05); tape.rotation.y = 0; crates.add(tape); }
+
+// VALORANT-API: server rack with blinking LEDs
+const rack = mk("valorant", -3.9, 0, -4.6);
+box(1.5, 2.8, 1.2, 0x111827, 0, 1.4, 0, rack);
+const leds = [];
+for (let i = 0; i < 6; i++) {
+  box(1.3, 0.28, 0.06, 0x1f2937, 0, 0.5 + i * 0.4, 0.62, rack);
+  for (let j = 0; j < 3; j++) { const l = box(0.08, 0.08, 0.04, 0x000000, -0.45 + j * 0.2, 0.5 + i * 0.4, 0.66, rack, { emissive: [0x4ade80, 0xfb7185, 0x60a5fa][(i + j) % 3], emissiveIntensity: 1.2 }); l.userData.noGlow = true; l.castShadow = false; leds.push(l); }
+  box(0.5, 0.05, 0.04, 0x334155, 0.3, 0.5 + i * 0.4, 0.66, rack);
+}
+
+// TRANSIT: wall map
+const mapG = mk("transit", -5.95, 2.7, 0.5);
+const mapTex = canvasTex(1024, 640, (g, w, h) => {
+  g.fillStyle = "#f4f0e8"; g.fillRect(0, 0, w, h); g.strokeStyle = "#d8d2c4"; g.lineWidth = 1;
+  for (let x = 0; x < w; x += 64) { g.beginPath(); g.moveTo(x, 0); g.lineTo(x, h); g.stroke(); } for (let y = 0; y < h; y += 64) { g.beginPath(); g.moveTo(0, y); g.lineTo(w, y); g.stroke(); }
+  const line = (pts, c) => { g.strokeStyle = c; g.lineWidth = 14; g.lineJoin = "round"; g.beginPath(); pts.forEach(([x, y], i) => i ? g.lineTo(x, y) : g.moveTo(x, y)); g.stroke(); pts.forEach(([x, y]) => { g.fillStyle = "#fff"; g.lineWidth = 5; g.strokeStyle = "#111"; g.beginPath(); g.arc(x, y, 12, 0, 7); g.fill(); g.stroke(); }); };
+  line([[100, 480], [300, 480], [420, 360], [620, 360], [760, 220], [920, 220]], "#2563eb");
+  line([[120, 120], [300, 200], [420, 360], [560, 500], [800, 500]], "#e11d48");
+  line([[200, 580], [330, 420], [620, 360], [700, 140]], "#16a34a");
+  g.fillStyle = "#111"; g.font = '600 30px "IBM Plex Mono"'; g.fillText("A* ROUTE  ·  Origin → Destination", 40, 56);
+});
+const mapPlane = new THREE.Mesh(new THREE.PlaneGeometry(3.6, 2.25), new THREE.MeshBasicMaterial({ map: mapTex })); mapPlane.rotation.y = Math.PI / 2; mapPlane.position.x = 0.06; mapG.add(mapPlane); mapPlane.userData.noGlow = true;
+box(0.1, 2.4, 3.75, 0x0f172a, -0.02, 0, 0, mapG);
+// route marker pin
+{ const pin = new THREE.Mesh(new THREE.SphereGeometry(0.09, 12, 8), mat(0xfb7185, { emissive: 0xfb7185, emissiveIntensity: .8 })); pin.position.set(0.05, 0.2, -0.3); mapG.add(pin); pin.userData.noGlow = true; }
+
+// ABOUT: framed poster
+const poster = mk("about", 3.2, 3.4, -5.9);
+const posterTex = canvasTex(512, 640, (g, w, h) => {
+  g.fillStyle = "#f4f0e8"; g.fillRect(0, 0, w, h);
+  g.fillStyle = "#c2410c"; g.fillRect(40, 40, 120, 10);
+  g.fillStyle = "#161616"; g.font = '700 74px "Bricolage Grotesque", sans-serif'; g.fillText("Ean", 40, 190); g.fillText("Bynoe", 40, 270);
+  g.font = '500 24px "IBM Plex Mono", monospace'; g.fillStyle = "#4b4b4b"; g.fillText("Software Engineer", 40, 330); g.fillText("Toronto, ON", 40, 366);
+  g.fillStyle = "#161616"; g.fillRect(40, 440, 432, 2); g.font = '500 20px "IBM Plex Mono", monospace'; g.fillText("Grad Spring 2027", 40, 490); g.fillText("Open to new grad roles", 40, 524);
+});
+box(2.0, 2.5, 0.1, 0x0f172a, 0, 0, 0, poster);
+const pp = new THREE.Mesh(new THREE.PlaneGeometry(1.8, 2.3), new THREE.MeshBasicMaterial({ map: posterTex })); pp.position.z = 0.06; poster.add(pp); pp.userData.noGlow = true;
+
+/* ---------- picking, highlight, focus ---------- */
+const pickables = []; Object.values(groups).forEach(g => g.traverse(o => { if (o.isMesh) { o.userData.gid = g.userData.id; pickables.push(o); } }));
+const ray = new THREE.Raycaster(), ptr = new THREE.Vector2();
+let hover = null, goal = null, active = null;
+function setGlow(id, on) {
+  groups[id]?.traverse(o => { if (o.isMesh && !o.userData.noGlow) [].concat(o.material).forEach(m => { if (m.emissive) { m.emissive.set(on ? 0x5eead4 : 0x000000); m.emissiveIntensity = on ? 0.22 : 0; } }); });
+}
+function pick(e) {
+  const r = renderer.domElement.getBoundingClientRect();
+  ptr.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
+  ray.setFromCamera(ptr, camera);
+  return ray.intersectObjects(pickables, false)[0]?.object.userData.gid ?? null;
+}
+renderer.domElement.addEventListener("pointermove", e => {
+  if (e.buttons) return;
+  const id = pick(e); if (id === hover) return;
+  if (hover && hover !== active) setGlow(hover, false);
+  hover = id; if (id) setGlow(id, true);
+  renderer.domElement.style.cursor = id ? "pointer" : "grab";
+});
+let down = null;
+renderer.domElement.addEventListener("pointerdown", e => down = [e.clientX, e.clientY]);
+renderer.domElement.addEventListener("pointerup", e => {
+  if (!down || Math.hypot(e.clientX - down[0], e.clientY - down[1]) > 5) return;
+  const id = pick(e); id ? open(id) : close();
+});
+
+const panel = document.getElementById("panel"), tabs = document.getElementById("tabs");
+const esc = s => s.replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+function open(id) {
+  const it = items[id]; if (active && active !== id) setGlow(active, false);
+  active = id; setGlow(id, true);
+  panel.innerHTML = `<button class="btn close" aria-label="Close">✕</button><p class="st">${esc(it.status)}</p><h2>${esc(it.title)}</h2><p>${esc(it.desc)}</p><ul class="chips">${it.stack.map(s => `<li>${esc(s)}</li>`).join("")}</ul><div class="links">${it.links.map(([l, u]) => `<a class="btn" href="${u}" target="_blank" rel="noopener noreferrer">${esc(l)} ↗</a>`).join("")}</div>`;
+  panel.classList.add("open"); panel.querySelector(".close").onclick = close;
+  tabs.querySelectorAll("button").forEach(b => b.classList.toggle("on", b.dataset.id === id));
+  const [t, c] = it.focus; goal = [new THREE.Vector3(...c), new THREE.Vector3(...t)];
+  if (reduce) { camera.position.copy(goal[0]); controls.target.copy(goal[1]); goal = null; }
+}
+function close() {
+  if (active) setGlow(active, false); active = null; panel.classList.remove("open");
+  tabs.querySelectorAll("button").forEach(b => b.classList.remove("on"));
+  goal = [HOME[0].clone(), HOME[1].clone()];
+  if (reduce) { camera.position.copy(goal[0]); controls.target.copy(goal[1]); goal = null; }
+}
+addEventListener("keydown", e => e.key === "Escape" && close());
+Object.entries(items).forEach(([id, it]) => { const b = document.createElement("button"); b.textContent = it.tab; b.dataset.id = id; b.onclick = () => open(id); tabs.append(b); });
+controls.addEventListener("start", () => goal = null);
+
+/* ---------- loop ---------- */
+function resize() { const w = innerWidth, h = innerHeight; renderer.setSize(w, h); camera.aspect = w / h; camera.fov = w / h < 0.8 ? 60 : 40; camera.updateProjectionMatrix(); }
+addEventListener("resize", resize); resize();
+const clock = new THREE.Clock();
+renderer.setAnimationLoop(() => {
+  const dt = Math.min(clock.getDelta(), 0.05), t = clock.elapsedTime;
+  if (goal) {
+    const k = 1 - Math.exp(-dt * 4);
+    camera.position.lerp(goal[0], k); controls.target.lerp(goal[1], k);
+    if (camera.position.distanceTo(goal[0]) < 0.02) goal = null;
+  }
+  if (!reduce) leds.forEach((l, i) => l.material.emissiveIntensity = 0.3 + 1.3 * (Math.sin(t * 3 + i * 1.7) > 0 ? 1 : 0.1));
+  controls.update(); renderer.render(scene, camera);
+});
+</script>
+</body>
+</html>
