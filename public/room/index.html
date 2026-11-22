@@ -84,13 +84,37 @@ const items = {
     desc: "I play Valorant. My Valorant-API project serves player profiles, rank data and match stats for it.",
     stack: ["FPS", "Valorant-API"], links: [["Valorant-API code", "https://github.com/DeathSurvivor02/Valorant-API"]],
     focus: [[-5.9, 3.6, -3.3], [-2.6, 3.4, -0.8]] },
+  setup: { tab: "Setup", status: "Off the clock", title: "Desk setup",
+    desc: "An ASUS ROG Strix gaming laptop, a 26.5-inch 240Hz OLED monitor and a magnetic 75% keyboard on an L-shaped desk.",
+    stack: ["ROG Strix G16", "240Hz OLED", "75% keyboard"], links: [],
+    focus: [[-1.45, 1.9, -3.85], [0.5, 3.0, -1.0]] },
+  fitness: { tab: "Fitness", status: "Off the clock", title: "Strength training",
+    desc: "I train with weights, so the corner has a mat, dumbbells and a gym bag.",
+    stack: ["Strength training"], links: [],
+    focus: [[5.0, 0.5, -0.4], [7.0, 3.0, 2.6]] },
+  music: { tab: "Music", status: "Off the clock", title: "On repeat",
+    desc: "Hip-hop, rap and R&B: 21 Savage, Drake, JID, Baby Keem, Kendrick Lamar, J. Cole and Future.",
+    stack: ["Hip-hop", "Rap", "R&B"], links: [],
+    focus: [[-5.9, 3.4, 5.3], [-2.8, 3.3, 6.6]] },
+  media: { tab: "Shows & books", status: "Off the clock", title: "Anime, shows, films, books",
+    desc: "Anime like Jobless Reincarnation and The Pet Girl of Sakurasou. Dramas like MacGyver, Scorpion and The Blacklist. Films like Interstellar and The Batman. I finished the Project Hail Mary audiobook.",
+    stack: ["Anime", "TV dramas", "Movies", "Books"], links: [],
+    focus: [[-4.9, 4.2, -5.85], [-3.0, 3.8, -2.6]] },
+  fragrance: { tab: "Fragrance", status: "Off the clock", title: "Fragrance",
+    desc: "I collect colognes and like picking apart the notes, such as sandalwood, cocoa butter and amber.",
+    stack: ["Colognes"], links: [],
+    focus: [[5.2, 3.0, -5.85], [5.6, 3.3, -2.4]] },
+  cafe: { tab: "Cafes", status: "Off the clock", title: "Coffee and dessert",
+    desc: "I like trying local coffee and dessert cafes.",
+    stack: ["Coffee", "Desserts"], links: [],
+    focus: [[3.2, 0.75, 2.0], [3.5, 2.3, 4.3]] },
   chess: { tab: "Chess", status: "Off the clock", title: "Chess",
     desc: "I play on Chess.com, and my dashboard has a live puzzle and game monitor for it. The position on this board is made up.",
     stack: ["Chess.com", "Dashboard widget"], links: [["See the dashboard", DASH]],
     focus: [[3.2, 0.75, 2.0], [4.7, 2.5, 3.9]] },
-  neutron: { tab: "Neutron star", status: "Off the clock", title: "Physics simulation R&D",
-    desc: "My dashboard has an R&D hub for a neutron star simulation: architecture notes plus fixed-timestep and multi-threading strategies for the physics loop.",
-    stack: ["Physics sim", "Fixed timestep", "Multi-threading"], links: [["See the dashboard", DASH]],
+  neutron: { tab: "Neutron star", status: "Off the clock", title: "Physics and simulation",
+    desc: "A C++ particle physics engine built from scratch with my own vector and matrix math, plus an Unreal Engine neutron star simulation exploring collapse and density. Notes on fixed-timestep and multi-threading live in my dashboard.",
+    stack: ["C++", "Particle physics", "Unreal Engine", "Fixed timestep"], links: [["See the dashboard", DASH]],
     focus: [[-4.3, 1.7, 3.6], [-2.4, 2.6, 5.4]] },
   wordle: { tab: "Wordle", status: "Off the clock", title: "Daily Wordle",
     desc: "A daily Wordle mini-game lives in my dashboard as a mental warm-up before work.",
@@ -166,7 +190,14 @@ floor.castShadow = false; floor.rotation.x = -Math.PI / 2; scene.add(floor);
 const plaster = noiseTex("#d6d1c8", 0.05); plaster.wrapS = plaster.wrapT = THREE.RepeatWrapping; plaster.repeat.set(4, 3);
 const wallMat = () => mat(0xffffff, { map: plaster, roughness: 0.95 });
 const bw = box(12.4, 6, 0.2, 0, 0, 3, -6.1, scene, { material: wallMat() }); bw.castShadow = false;
-const lw = box(0.2, 6, 12.4, 0, -6.1, 3, 0, scene, { material: wallMat() }); lw.castShadow = false;
+const brickTex = canvasTex(512, 512, (g, w, h) => {
+  g.fillStyle = "#3a2a24"; g.fillRect(0, 0, w, h);
+  for (let r = 0; r < 16; r++) for (let c = -1; c < 9; c++) { g.fillStyle = `rgb(${112 + rnd() * 40},${56 + rnd() * 20},${42 + rnd() * 16})`; g.fillRect(c * 64 + (r % 2 ? 32 : 0) + 2, r * 32 + 2, 60, 28); }
+}); brickTex.wrapS = brickTex.wrapT = THREE.RepeatWrapping; brickTex.repeat.set(6, 3);
+const lw = box(0.2, 6, 12.4, 0, -6.1, 3, 0, scene, { material: mat(0xffffff, { map: brickTex, roughness: 0.92 }) }); lw.castShadow = false;
+const ledMat = new THREE.MeshBasicMaterial({ color: new THREE.Color(0xff9a3c).multiplyScalar(2.4) });
+[[12, 0.06, 0.06, 0, 5.9, -5.93], [0.06, 0.06, 12, -5.93, 5.9, 0]].forEach(([w, h, d, x, y, z]) => { const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), ledMat); m.position.set(x, y, z); scene.add(m); });
+const ledLight = new THREE.PointLight(0xff8a3c, 4, 9, 1.6); ledLight.position.set(-4.6, 5.4, -4.6); scene.add(ledLight);
 box(12, 0.3, 0.1, 0xf2efe9, 0, 0.15, -5.95).castShadow = false; box(0.1, 0.3, 12, 0xf2efe9, -5.95, 0.15, 0).castShadow = false;
 box(12.4, 0.4, 12.4, 0x0b0e14, 0, -0.23, 0, scene, { roughness: 1 }).castShadow = false;
 
@@ -179,9 +210,9 @@ const win = new THREE.Mesh(new THREE.PlaneGeometry(2.4, 2.6), winMat); win.rotat
 [[0.12, 2.8, 0.12, 2.05], [0.12, 2.8, 0.12, 4.55]].forEach(([w, h, d, z]) => box(w, h, d, 0xf2efe9, -5.96, 3.4, z));
 box(0.12, 0.12, 2.6, 0xf2efe9, -5.96, 2.05, 3.3); box(0.12, 0.12, 2.6, 0xf2efe9, -5.96, 4.75, 3.3); box(0.1, 0.1, 2.6, 0xf2efe9, -5.97, 3.4, 3.3);
 // plant: leaves as flattened ellipsoids
-cyl(0.4, 0.32, 0.7, 0xe8e2d6, 5.3, 0.35, 0.4, scene, 32, { roughness: 0.9 });
+cyl(0.4, 0.32, 0.7, 0xe8e2d6, -5.0, 0.35, 5.0, scene, 32, { roughness: 0.9 });
 const leafMat = mat(0x3f8f4f, { roughness: 0.55, side: THREE.DoubleSide });
-for (let i = 0; i < 16; i++) { const l = shadowed(new THREE.Mesh(new THREE.SphereGeometry(0.36, 16, 10), leafMat)); l.scale.set(1, 0.08, 0.42); const a = i * 2.4, r = 0.22 + (i % 4) * 0.08; l.position.set(5.3 + Math.cos(a) * r, 0.95 + (i % 5) * 0.16, 0.4 + Math.sin(a) * r); l.rotation.set(0, -a, 0.6 + (i % 3) * 0.2); scene.add(l); }
+for (let i = 0; i < 16; i++) { const l = shadowed(new THREE.Mesh(new THREE.SphereGeometry(0.36, 16, 10), leafMat)); l.scale.set(1, 0.08, 0.42); const a = i * 2.4, r = 0.22 + (i % 4) * 0.08; l.position.set(-5.0 + Math.cos(a) * r, 0.95 + (i % 5) * 0.16, 5.0 + Math.sin(a) * r); l.rotation.set(0, -a, 0.6 + (i % 3) * 0.2); scene.add(l); }
 // chair
 const chair = new THREE.Group(); chair.position.set(0.3, 0, -2.5); chair.rotation.y = 0.35; scene.add(chair);
 box(1, 0.14, 1, 0x2c333d, 0, 0.95, 0, chair, { roughness: 0.8 }); box(1, 1.1, 0.12, 0x2c333d, 0, 1.55, -0.45, chair, { roughness: 0.8 }); cyl(0.05, 0.05, 0.9, 0x111418, 0, 0.45, 0, chair, 12, { metalness: 0.9, roughness: 0.3 }); cyl(0.5, 0.5, 0.05, 0x111418, 0, 0.05, 0, chair, 5, { metalness: 0.8, roughness: 0.35 });
@@ -205,7 +236,7 @@ const screenTex = canvasTex(640, 380, (g, w, h) => {
   g.fillStyle = "#12151c"; g.fillRect(520, 20, 100, 340); g.fillStyle = "#4ade80"; g.fillRect(534, 40, 40, 8);
 });
 const scr = new THREE.Mesh(new THREE.PlaneGeometry(2.3, 1.3), basic(screenTex, 0.9)); scr.position.set(0, 2.55, -0.265); desk.add(scr);
-box(1.2, 0.04, 0.42, 0x1b1f26, -0.5, 1.55, 0.45, desk, { roughness: 0.5 }); // keyboard
+box(1.2, 0.04, 0.42, 0x1b1f26, 0.25, 1.55, 0.5, desk, { roughness: 0.5 }); // keyboard
 cyl(0.16, 0.14, 0.3, 0xf5f2ec, 1.9, 1.68, 0.25, desk, 32, { roughness: 0.25, clearcoat: 1 }); // mug
 cyl(0.25, 0.3, 0.05, 0x15181d, -1.9, 1.56, -0.4, desk, 32, { metalness: 0.9, roughness: 0.3 }); cyl(0.03, 0.03, 1, 0xb8c0cc, -1.9, 2.05, -0.4, desk, 12, { metalness: 1, roughness: 0.25 });
 const shade = cyl(0.12, 0.4, 0.4, 0xffd9a0, -1.9, 2.6, -0.4, desk, 32, { emissive: 0xffc680, emissiveIntensity: 1.1, roughness: 0.8 }); shade.userData.noGlow = true;
@@ -242,7 +273,7 @@ const mapTex = canvasTex(1024, 640, (g, w, h) => {
   for (let x = 0; x < w; x += 64) { g.beginPath(); g.moveTo(x, 0); g.lineTo(x, h); g.stroke(); } for (let y = 0; y < h; y += 64) { g.beginPath(); g.moveTo(0, y); g.lineTo(w, y); g.stroke(); }
   const line = (pts, c) => { g.strokeStyle = c; g.lineWidth = 14; g.lineJoin = "round"; g.beginPath(); pts.forEach(([x, y], i) => i ? g.lineTo(x, y) : g.moveTo(x, y)); g.stroke(); pts.forEach(([x, y]) => { g.fillStyle = "#fff"; g.lineWidth = 5; g.strokeStyle = "#111"; g.beginPath(); g.arc(x, y, 12, 0, 7); g.fill(); g.stroke(); }); };
   line([[100, 480], [300, 480], [420, 360], [620, 360], [760, 220], [920, 220]], "#2563eb"); line([[120, 120], [300, 200], [420, 360], [560, 500], [800, 500]], "#e11d48"); line([[200, 580], [330, 420], [620, 360], [700, 140]], "#16a34a");
-  g.fillStyle = "#111"; g.font = '600 30px "IBM Plex Mono"'; g.fillText("A* ROUTE  ·  Origin → Destination", 40, 56);
+  g.fillStyle = "#111"; g.font = '600 30px "IBM Plex Mono"'; g.fillText("PROJECT 88  ·  Transit routing  ·  A* search", 40, 56);
 });
 box(0.08, 2.5, 3.8, 0x15181d, 0, 0, 0, mapG, { roughness: 0.4, metalness: 0.5 });
 const mp = new THREE.Mesh(new THREE.PlaneGeometry(3.6, 2.25), basic(mapTex, 0.8)); mp.rotation.y = Math.PI / 2; mp.position.x = 0.05; mapG.add(mp);
@@ -316,6 +347,58 @@ const nsSpin = new THREE.Group(); nsSpin.position.y = 1.65; nsSpin.rotation.z = 
 [0.48, 0.66].forEach((r, i) => { const t = new THREE.Mesh(new THREE.TorusGeometry(r, 0.012, 8, 96), new THREE.MeshBasicMaterial({ color: i ? 0x9ec5ff : 0xfda4af })); t.rotation.x = Math.PI / 2; t.userData.noGlow = true; nsSpin.add(t); });
 [1, -1].forEach(s => { const j = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.06, 0.9, 12, 1, true), new THREE.MeshBasicMaterial({ color: 0x9ec5ff, transparent: true, opacity: 0.28, blending: THREE.AdditiveBlending, depthWrite: false })); j.position.y = s * 0.55; if (s < 0) j.rotation.x = Math.PI; j.userData.noGlow = true; nsSpin.add(j); });
 const nsLight = new THREE.PointLight(0x9ec5ff, 3, 4, 1.8); nsLight.position.set(-4.3, 1.65, 3.6); scene.add(nsLight);
+
+// SETUP: ROG-style gaming laptop (desk, left)
+const setup = mk("setup", -1.45, 1.56, -3.85);
+box(1.2, 0.04, 0.8, 0x14171c, 0, 0.02, 0, setup, { metalness: 0.6, roughness: 0.4 });
+const kbTex = canvasTex(256, 128, (g, w, h) => { g.fillStyle = "#050608"; g.fillRect(0, 0, w, h); for (let r = 0; r < 5; r++) for (let c = 0; c < 14; c++) { g.fillStyle = `hsl(${(c * 22 + r * 10) % 360},90%,55%)`; g.fillRect(8 + c * 17, 8 + r * 20, 14, 15); } });
+const kbp = new THREE.Mesh(new THREE.PlaneGeometry(1.0, 0.5), basic(kbTex, 0.8)); kbp.rotation.x = -Math.PI / 2; kbp.position.set(0, 0.045, 0.08); setup.add(kbp);
+const lid = new THREE.Group(); lid.position.set(0, 0.04, -0.38); lid.rotation.x = -0.35; setup.add(lid);
+box(1.2, 0.8, 0.03, 0x14171c, 0, 0.4, 0, lid, { metalness: 0.6, roughness: 0.4 });
+const lsTex = canvasTex(512, 320, (g, w, h) => { const gr = g.createLinearGradient(0, 0, w, h); gr.addColorStop(0, "#1b0b3a"); gr.addColorStop(0.5, "#5b21b6"); gr.addColorStop(1, "#0891b2"); g.fillStyle = gr; g.fillRect(0, 0, w, h); g.fillStyle = "rgba(255,255,255,.12)"; g.beginPath(); g.arc(380, 120, 90, 0, 7); g.fill(); });
+const lsp = new THREE.Mesh(new THREE.PlaneGeometry(1.12, 0.7), basic(lsTex, 0.85)); lsp.position.set(0, 0.4, 0.02); lid.add(lsp);
+
+// FITNESS: mat, dumbbells, gym bag
+const fit = mk("fitness", 5.0, 0, -0.4);
+box(1.0, 0.03, 2.0, 0x34413d, 0, 0.015, 0, fit, { roughness: 0.95 });
+[[-0.2, -0.4], [0.2, 0.3]].forEach(([x, z]) => {
+  const h = cyl(0.03, 0.03, 0.5, 0x9aa0a8, x, 0.15, z, fit, 16, { metalness: 0.9, roughness: 0.3 }); h.rotation.z = Math.PI / 2;
+  [-0.27, 0.27].forEach(dx => { cyl(0.12, 0.12, 0.09, 0x15181d, x + dx, 0.15, z, fit, 6, { metalness: 0.8, roughness: 0.4 }).rotation.z = Math.PI / 2; });
+});
+const bag = shadowed(new THREE.Mesh(new THREE.CapsuleGeometry(0.15, 0.5, 8, 16), mat(0x4b5563, { roughness: 0.8 }))); bag.rotation.z = Math.PI / 2; bag.position.set(0.7, 0.2, 0.75); fit.add(bag);
+
+// MUSIC: typographic poster on the left wall
+const music = mk("music", -5.9, 3.4, 5.3);
+const mTex = canvasTex(512, 640, (g, w, h) => {
+  const gr = g.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, "#7f1d1d"); gr.addColorStop(1, "#111827"); g.fillStyle = gr; g.fillRect(0, 0, w, h);
+  g.textAlign = "center"; g.fillStyle = "#fff"; g.font = '700 64px "Bricolage Grotesque", sans-serif'; g.fillText("ON REPEAT", 256, 110);
+  g.font = '500 34px "IBM Plex Mono", monospace';
+  ["21 SAVAGE", "DRAKE", "JID", "BABY KEEM", "KENDRICK LAMAR", "J. COLE", "FUTURE"].forEach((n, i) => { g.fillStyle = i % 2 ? "#fda4af" : "#fff"; g.fillText(n, 256, 200 + i * 58); });
+});
+box(0.08, 1.7, 1.4, 0x15181d, 0, 0, 0, music, { roughness: 0.4 });
+const mpl = new THREE.Mesh(new THREE.PlaneGeometry(1.2, 1.5), basic(mTex, 0.85)); mpl.rotation.y = Math.PI / 2; mpl.position.x = 0.05; music.add(mpl);
+
+// MEDIA: shelf with discs, a book and two figures
+const media = mk("media", -4.9, 4.2, -5.85);
+box(1.9, 0.05, 0.35, 0x6b4a2f, 0, 0, 0.15, media, { roughness: 0.5 });
+for (let i = 0; i < 14; i++) { const hh = 0.36 + rnd() * 0.1; box(0.045, hh, 0.26, new THREE.Color().setHSL(rnd(), 0.4, 0.18 + rnd() * 0.25), -0.88 + i * 0.058, 0.025 + hh / 2, 0.15, media, { roughness: 0.6 }); }
+const bookTex = canvasTex(256, 384, (g, w, h) => { g.fillStyle = "#0b0f1a"; g.fillRect(0, 0, w, h); g.fillStyle = "#e5b84b"; g.textAlign = "center"; g.font = '700 30px "Bricolage Grotesque", sans-serif'; ["PROJECT", "HAIL", "MARY"].forEach((t, i) => g.fillText(t, 128, 120 + i * 44)); g.font = '500 18px "IBM Plex Mono", monospace'; g.fillText("ANDY WEIR", 128, 330); });
+const dark = mat(0x0b0f1a); const book = shadowed(new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.42, 0.06), [dark, dark, dark, dark, mat(0xffffff, { map: bookTex }), dark])); book.position.set(0.2, 0.235, 0.2); media.add(book);
+[[0.55, 0xf9a8d4], [0.75, 0x5eead4]].forEach(([x, c]) => { cyl(0.06, 0.06, 0.015, 0x1b1f26, x, 0.033, 0.18, media, 24); cyl(0.035, 0.05, 0.14, c, x, 0.11, 0.18, media, 20, { roughness: 0.5 }); const hd = shadowed(new THREE.Mesh(new THREE.SphereGeometry(0.04, 20, 14), mat(0xf5d0b0))); hd.position.set(x, 0.22, 0.18); media.add(hd); });
+
+// FRAGRANCE: shelf with cologne bottles
+const frag = mk("fragrance", 5.2, 3.0, -5.85);
+box(1.2, 0.05, 0.3, 0x6b4a2f, 0, 0, 0.12, frag, { roughness: 0.5 });
+const glass = c => ({ color: c, transparent: true, opacity: 0.8, roughness: 0.08, envMapIntensity: 2 });
+[[-0.45, 0.16, 0.26, 0.09, 0xc2410c, 0x111111], [-0.15, 0.13, 0.22, 0.08, 0xf5d68a, 0xd4af37], [0.15, 0.12, 0.2, 0.08, 0x1f2937, 0x9ca3af], [0.42, 0.1, 0.3, 0.07, 0xa7c4d4, 0x9ca3af]].forEach(([x, w, h, d, c, cap]) => { box(w, h, d, c, x, 0.025 + h / 2, 0.12, frag, glass(c)); box(w * 0.5, 0.05, d * 0.6, cap, x, 0.025 + h + 0.025, 0.12, frag, { metalness: 0.8, roughness: 0.3 }); });
+
+// CAFE: cup and paper bag on the coffee table
+const cafe = mk("cafe", 3.2, 0.6, 2.0);
+cyl(0.07, 0.055, 0.16, 0xffffff, -0.7, 0.08, 0.5, cafe, 24, { roughness: 0.4 }); cyl(0.072, 0.06, 0.06, 0x2563eb, -0.7, 0.07, 0.5, cafe, 24, { roughness: 0.5 }); cyl(0.075, 0.075, 0.02, 0x111111, -0.7, 0.17, 0.5, cafe, 24);
+const pbag = box(0.2, 0.28, 0.12, 0xb08968, 0.6, 0.14, -0.65, cafe, { roughness: 0.95 }); pbag.rotation.y = 0.4; const fold = box(0.2, 0.03, 0.12, 0x8a6a4c, 0.6, 0.295, -0.65, cafe, { roughness: 0.95 }); fold.rotation.y = 0.4;
+
+// bean bag (decor)
+const beanTex = noiseTex("#b39b7c", 0.12); const bean = shadowed(new THREE.Mesh(new THREE.SphereGeometry(0.75, 32, 20), mat(0xffffff, { map: beanTex, roughness: 0.95 }))); bean.scale.set(1, 0.7, 1); bean.position.set(-4.2, 0.5, -1.9); scene.add(bean);
 
 /* ---------- picking, highlight, focus ---------- */
 const pickables = []; Object.values(groups).forEach(g => g.traverse(o => { if (o.isMesh) { o.userData.gid = g.userData.id; pickables.push(o); } }));
