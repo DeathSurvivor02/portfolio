@@ -80,6 +80,10 @@ const items = {
     stack: ["Rust", "Dioxus", "Serde", "Chrono"],
     links: [["Code", DASH]],
     focus: [[0, 1.75, -4.2], [1.4, 2.7, -0.6]] },
+  valfan: { tab: "Valorant", status: "Off the clock", title: "Valorant",
+    desc: "I play Valorant. My Valorant-API project serves player profiles, rank data and match stats for it.",
+    stack: ["FPS", "Valorant-API"], links: [["Valorant-API code", "https://github.com/DeathSurvivor02/Valorant-API"]],
+    focus: [[-5.9, 3.6, -3.3], [-2.6, 3.4, -0.8]] },
   chess: { tab: "Chess", status: "Off the clock", title: "Chess",
     desc: "I play on Chess.com, and my dashboard has a live puzzle and game monitor for it. The position on this board is made up.",
     stack: ["Chess.com", "Dashboard widget"], links: [["See the dashboard", DASH]],
@@ -97,7 +101,7 @@ const items = {
     stack: ["Ambient audio", "Deep work"], links: [["See the dashboard", DASH]],
     focus: [[1.55, 2.0, -3.6], [2.9, 2.9, -1.2]] },
 };
-const HOBBIES = ["chess", "neutron", "wordle", "lofi"];
+const HOBBIES = ["valfan", "chess", "neutron", "wordle", "lofi"];
 
 const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
 let renderer;
@@ -266,6 +270,19 @@ const wTex = canvasTex(400, 480, (g, w, h) => {
 });
 box(1.55, 1.85, 0.08, 0x15181d, 0, 0, 0, wordle, { roughness: 0.4 });
 const wp = new THREE.Mesh(new THREE.PlaneGeometry(1.4, 1.68), basic(wTex, 0.9)); wp.position.z = 0.05; wordle.add(wp);
+
+// VALORANT: framed crosshair art
+const valfan = mk("valfan", -5.9, 3.6, -3.3);
+const xTex = canvasTex(512, 512, (g, w, h) => {
+  g.fillStyle = "#0f1923"; g.fillRect(0, 0, w, h);
+  g.strokeStyle = "rgba(255,255,255,.05)"; for (let i = 0; i < w; i += 32) { g.beginPath(); g.moveTo(i, 0); g.lineTo(i, h); g.stroke(); g.beginPath(); g.moveTo(0, i); g.lineTo(w, i); g.stroke(); }
+  g.strokeStyle = "#ff4655"; g.lineWidth = 3; g.beginPath(); g.arc(256, 236, 110, 0, 7); g.stroke();
+  g.strokeStyle = "#5eead4"; g.lineWidth = 12; [[256, 90, 256, 170], [256, 302, 256, 382], [110, 236, 190, 236], [322, 236, 402, 236]].forEach(([a, b, c, d]) => { g.beginPath(); g.moveTo(a, b); g.lineTo(c, d); g.stroke(); });
+  g.fillStyle = "#fff"; g.fillRect(250, 230, 12, 12);
+  g.fillStyle = "#ece8e1"; g.font = '700 34px "IBM Plex Mono", monospace'; g.textAlign = "center"; g.fillText("LOCK IN", 256, 450);
+});
+box(0.08, 1.7, 1.7, 0x15181d, 0, 0, 0, valfan, { roughness: 0.4 });
+const xp = new THREE.Mesh(new THREE.PlaneGeometry(1.5, 1.5), basic(xTex, 0.9)); xp.rotation.y = Math.PI / 2; xp.position.x = 0.05; valfan.add(xp);
 
 // CHESS: coffee table + board + pieces
 const chess = mk("chess", 3.2, 0, 2.0);
